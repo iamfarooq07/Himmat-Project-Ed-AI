@@ -1,4 +1,9 @@
-import  express from "express"
+import express from "express"
+import dotenv from "dotenv"
+import { dataBase } from "./src/config/db.js";
+
+dotenv.config();
+
 
 const app = express();
 const PORT = 3000;
@@ -6,7 +11,10 @@ const PORT = 3000;
 app.get("/", (req, res) => {
     res.send("Hello World")
 })
-
-app.listen(PORT, () => {
-    console.log(`Server Connected On Port ${PORT}`);
-})
+dataBase().then(() => {
+    app.listen(PORT, () => {
+        console.log(`Server Connected On Port ${PORT}`);
+    })
+}).catch((error) => {
+    console.log("Error", error.message);
+});
