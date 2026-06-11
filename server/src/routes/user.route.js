@@ -7,7 +7,4 @@ import { userLogin, userRegister } from "../controllers/user.controller.js";
 export const route = express.Router();
 
 route.post("/register", userRegister);
-route.post("/login", userLogin
-
-      
-)
+route.post("/login", userLogin);

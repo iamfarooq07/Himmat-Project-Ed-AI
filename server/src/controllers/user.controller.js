@@ -4,7 +4,7 @@ import jwt from "jsonwebtoken"
 
 const userRegister = async (req, res) => {
     try {
-        const { userName, email, password } = req.body;
+        const { userName, email, password, role } = req.body;
 
         if (!userName || !email || !password) {
             return res.status(401).json({ message: "Please All Field Fill" })
@@ -21,6 +21,7 @@ const userRegister = async (req, res) => {
         const user = await User.create({
             userName,
             email,
+            role,
             password: hashPassword
         });
 
