@@ -27,9 +27,9 @@ const userRegister = async (req, res) => {
 
         const token = jwt.sign(
             {
-                userId: user._id,
                 email: user.email,
-                userName: user.userName,
+                password: user.password,
+                role: user.role,
             },
             process.env.SECRET_KEY,
             {
@@ -37,7 +37,7 @@ const userRegister = async (req, res) => {
             }
         );
 
-        return res.status(201).json({ message: "Register Successfully", user, token })
+        return res.status(201).json({ message: "Register Successfully", user ,token})
     } catch (error) {
         res.status(500).json({ message: "Internet Error", error })
     }
@@ -62,6 +62,8 @@ const userLogin = async (req, res) => {
         const token = jwt.sign(
             {
                 email: user.email,
+                password: user.password,
+                role: user.role,
             },
             process.env.SECRET_KEY,
             {
