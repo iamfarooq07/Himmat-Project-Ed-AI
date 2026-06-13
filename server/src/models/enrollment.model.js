@@ -14,7 +14,7 @@ const enrollmentSchema = new mongoose.Schema(
         },
         progress: {
             type: Number,
-            default: 0, // 0 to 100 percentage
+            default: 0,
         },
         completedLectures: [
             {
@@ -30,6 +30,6 @@ const enrollmentSchema = new mongoose.Schema(
 );
 
 // Ek student ek course mein sirf ek baar enroll ho
-// enrollmentSchema.index({ student: 1, course: 1 }, { unique: true });
+enrollmentSchema.index({ student: 1, course: 1 }, { unique: true });
 
-module.exports = mongoose.model("Enrollment", enrollmentSchema);
+export const Enrollment = mongoose.model("Enrollment", enrollmentSchema);
