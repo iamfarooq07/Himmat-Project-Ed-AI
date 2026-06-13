@@ -1,4 +1,4 @@
-# LMS Himmat-Project — MERN Education Platform
+# LMS Project — MERN Education Platform
 
 A mid-level full-stack project built with MongoDB, Express, React, and Node.js.
 
