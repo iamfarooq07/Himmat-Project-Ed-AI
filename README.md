@@ -19,4 +19,4 @@ A mid-level full-stack project built with MongoDB, Express, React, and Node.js.
 1. Clone the repo
 2. Backend: `cd backend && npm install && npm run dev`
 3. Frontend: `cd frontend && npm install && npm run dev`
-4. `.env` mein `MONGO_URI` aur `JWT_SECRET` daalo
+4. `.env` in `MONGO_URI` and `JWT_SECRET` start
