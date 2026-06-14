@@ -1,5 +1,6 @@
 import express from "express"
 import dotenv from "dotenv"
+import cors from "cors"
 import { dataBase } from "./src/config/db.js";
 import { route } from "./src/routes/user.route.js";
 import { courseRoute } from "./src/routes/course.route.js";
@@ -10,6 +11,7 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+app.use(cors());
 app.use(express.json());
 
 app.use("/api/user", route)

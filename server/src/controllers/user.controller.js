@@ -3,6 +3,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken"
 
 const userRegister = async (req, res) => {
+
     try {
         const { userName, email, password, role } = req.body;
 
@@ -37,7 +38,7 @@ const userRegister = async (req, res) => {
             }
         );
 
-        return res.status(201).json({ message: "Register Successfully", user ,token})
+        return res.status(201).json({ message: "Register Successfully", user, token })
     } catch (error) {
         res.status(500).json({ message: "Internet Error", error })
     }
