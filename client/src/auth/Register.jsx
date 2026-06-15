@@ -11,12 +11,10 @@ function Register() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     if (!role) {
       alert("Please select a role");
       return;
     }
-
     try {
       const data = await registerUser({
         userName: name,
@@ -24,9 +22,7 @@ function Register() {
         password,
         role,
       });
-
       console.log("Success:", data);
-
       setName("");
       setEmail("");
       setPassword("");
@@ -37,52 +33,70 @@ function Register() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-200 p-4">
-      <div className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md border border-slate-100">
-        {/* Header Section */}
-        <div className="text-center mb-8">
-          <h2 className="text-3xl font-extrabold text-slate-800 tracking-tight">
-            Create Account
+    <div className="min-h-screen flex items-center justify-center bg-[#F7F5F2] p-6">
+      <div className="bg-white w-full max-w-md rounded-[20px] border border-[#EAE8E3] px-8 py-9">
+        {/* Logo Icon */}
+        <div className="flex justify-center mb-6">
+          <div className="w-11 h-11 bg-[#E8F4ED] rounded-xl flex items-center justify-center">
+            <svg
+              className="w-5 h-5 stroke-[#3B8C5A]"
+              viewBox="0 0 24 24"
+              fill="none"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M12 2L2 7l10 5 10-5-10-5z" />
+              <path d="M2 17l10 5 10-5" />
+              <path d="M2 12l10 5 10-5" />
+            </svg>
+          </div>
+        </div>
+
+        {/* Header */}
+        <div className="text-center mb-7">
+          <h2 className="text-[22px] font-semibold text-[#1A1A1A] tracking-tight">
+            Create your account
           </h2>
-          <p className="text-sm text-slate-500 mt-2">
-            Join our platform today. It only takes a minute.
+          <p className="text-[13.5px] text-[#888] mt-1.5">
+            Join thousands of learners today
           </p>
         </div>
 
-        <form className="space-y-5" onSubmit={handleSubmit}>
-          {/* Name Field */}
+        <form className="space-y-4" onSubmit={handleSubmit}>
+          {/* Name */}
           <div>
-            <label className="block text-sm font-semibold text-slate-700 mb-1.5">
+            <label className="block text-[13px] font-medium text-[#444] mb-1.5">
               Full Name
             </label>
             <input
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="e.g. John Doe"
-              className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition duration-200 text-slate-800 placeholder-slate-400"
+              placeholder="Enter Your Name"
+              className="w-full px-3.5 py-2.5 bg-[#FAFAF9] border border-[#E4E2DC] rounded-[10px] text-sm text-[#1A1A1A] placeholder-[#BDBAB4] focus:outline-none focus:border-[#3B8C5A] focus:bg-white transition"
               required
             />
           </div>
 
-          {/* Email Field */}
+          {/* Email */}
           <div>
-            <label className="block text-sm font-semibold text-slate-700 mb-1.5">
+            <label className="block text-[13px] font-medium text-[#444] mb-1.5">
               Email Address
             </label>
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="you@example.com"
-              className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition duration-200 text-slate-800 placeholder-slate-400"
+              placeholder="Enter Your Email"
+              className="w-full px-3.5 py-2.5 bg-[#FAFAF9] border border-[#E4E2DC] rounded-[10px] text-sm text-[#1A1A1A] placeholder-[#BDBAB4] focus:outline-none focus:border-[#3B8C5A] focus:bg-white transition"
               required
             />
           </div>
 
-          {/* Password Field */}
+          {/* Password */}
           <div>
-            <label className="block text-sm font-semibold text-slate-700 mb-1.5">
+            <label className="block text-[13px] font-medium text-[#444] mb-1.5">
               Password
             </label>
             <input
@@ -90,21 +104,21 @@ function Register() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
-              className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition duration-200 text-slate-800 placeholder-slate-400"
+              className="w-full px-3.5 py-2.5 bg-[#FAFAF9] border border-[#E4E2DC] rounded-[10px] text-sm text-[#1A1A1A] placeholder-[#BDBAB4] focus:outline-none focus:border-[#3B8C5A] focus:bg-white transition"
               required
             />
           </div>
 
-          {/* Role Field */}
+          {/* Role */}
           <div>
-            <label className="block text-sm font-semibold text-slate-700 mb-1.5">
+            <label className="block text-[13px] font-medium text-[#444] mb-1.5">
               I am a...
             </label>
             <div className="relative">
               <select
                 value={role}
                 onChange={(e) => setRole(e.target.value)}
-                className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition duration-200 text-slate-800 cursor-pointer appearance-none"
+                className="w-full px-3.5 py-2.5 bg-[#FAFAF9] border border-[#E4E2DC] rounded-[10px] text-sm text-[#1A1A1A] focus:outline-none focus:border-[#3B8C5A] focus:bg-white transition appearance-none cursor-pointer"
                 required
               >
                 <option value="" disabled hidden>
@@ -113,36 +127,31 @@ function Register() {
                 <option value="student">Student</option>
                 <option value="instructor">Instructor</option>
               </select>
-              {/* Custom Arrow icon for select dropdown */}
-              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-slate-500">
-                <svg
-                  className="fill-current h-4 w-4"
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 20 20"
-                >
+              <div className="pointer-events-none absolute inset-y-0 right-3.5 flex items-center text-[#AAA]">
+                <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 20 20">
                   <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
                 </svg>
               </div>
             </div>
           </div>
 
-          {/* Submit Button */}
+          {/* Submit */}
           <button
             type="submit"
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-xl shadow-md hover:shadow-lg hover:shadow-blue-500/10 active:scale-[0.98] transition duration-200 mt-2"
+            className="w-full bg-[#3B8C5A] hover:bg-[#2F7048] text-white font-semibold py-3 rounded-[10px] text-[14.5px] transition active:scale-[0.98] mt-1"
           >
-            Register Now
+            Create Account
           </button>
         </form>
 
-        {/* Footer Link */}
-        <p className="text-center text-sm text-slate-600 mt-6">
+        {/* Footer */}
+        <p className="text-center text-[13px] text-[#888] mt-5">
           Already have an account?{" "}
           <a
             href="/login"
-            className="text-blue-600 font-semibold hover:underline"
+            className="text-[#3B8C5A] font-medium hover:underline"
           >
-            Sign In
+            Sign in
           </a>
         </p>
       </div>

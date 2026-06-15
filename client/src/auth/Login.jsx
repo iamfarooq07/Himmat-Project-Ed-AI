@@ -10,38 +10,62 @@ function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-200 p-4">
-      <div className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md border border-gray-100">
-        <h2 className="text-3xl font-extrabold mb-2 text-center text-gray-900">
-          Welcome Back
-        </h2>
-        <p className="text-sm text-gray-500 text-center mb-6">
-          Please enter your details to sign in.
-        </p>
+    <div className="min-h-screen flex items-center justify-content bg-[#F7F5F2] p-6">
+      <div className="bg-white w-full max-w-md mx-auto rounded-[20px] border border-[#EAE8E3] px-8 py-9">
+        {/* Logo Icon */}
+        <div className="flex justify-center mb-6">
+          <div className="w-11 h-11 bg-[#E8F4ED] rounded-xl flex items-center justify-center">
+            <svg
+              className="w-5 h-5 stroke-[#3B8C5A]"
+              viewBox="0 0 24 24"
+              fill="none"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M12 2L2 7l10 5 10-5-10-5z" />
+              <path d="M2 17l10 5 10-5" />
+              <path d="M2 12l10 5 10-5" />
+            </svg>
+          </div>
+        </div>
 
-        <form className="space-y-5" onSubmit={handleSubmit}>
+        {/* Header */}
+        <div className="text-center mb-7">
+          <h2 className="text-[22px] font-semibold text-[#1A1A1A] tracking-tight">
+            Welcome back
+          </h2>
+          <p className="text-[13.5px] text-[#888] mt-1.5">
+            Enter your details to sign in
+          </p>
+        </div>
+
+        <form className="space-y-4" onSubmit={handleSubmit}>
           {/* Email */}
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1">
+            <label className="block text-[13px] font-medium text-[#444] mb-1.5">
               Email Address
             </label>
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="name@example.com"
-              className="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition duration-200 bg-gray-50 focus:bg-white"
+              placeholder="Enter Your Email"
+              className="w-full px-3.5 py-2.5 bg-[#FAFAF9] border border-[#E4E2DC] rounded-[10px] text-sm text-[#1A1A1A] placeholder-[#BDBAB4] focus:outline-none focus:border-[#3B8C5A] focus:bg-white transition"
               required
             />
           </div>
 
           {/* Password */}
           <div>
-            <div className="flex justify-between items-center mb-1">
-              <label className="block text-sm font-semibold text-gray-700">
+            <div className="flex justify-between items-center mb-1.5">
+              <label className="text-[13px] font-medium text-[#444]">
                 Password
               </label>
-              <a href="#" className="text-xs text-blue-600 hover:underline">
+              <a
+                href="#"
+                className="text-[12px] text-[#3B8C5A] hover:underline"
+              >
                 Forgot password?
               </a>
             </div>
@@ -50,40 +74,41 @@ function Login() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
-              className="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition duration-200 bg-gray-50 focus:bg-white"
+              className="w-full px-3.5 py-2.5 bg-[#FAFAF9] border border-[#E4E2DC] rounded-[10px] text-sm text-[#1A1A1A] placeholder-[#BDBAB4] focus:outline-none focus:border-[#3B8C5A] focus:bg-white transition"
               required
             />
           </div>
 
-          {/* Remember Me Checkbox */}
-          <div className="flex items-center">
+          {/* Remember Me */}
+          <div className="flex items-center gap-2">
             <input
               id="remember-me"
               type="checkbox"
-              className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded cursor-pointer"
+              className="w-[15px] h-[15px] accent-[#3B8C5A] cursor-pointer rounded"
             />
             <label
               htmlFor="remember-me"
-              className="ml-2 block text-sm text-gray-700 cursor-pointer select-none"
+              className="text-[13px] text-[#666] cursor-pointer select-none"
             >
               Remember me for 30 days
             </label>
           </div>
 
-          {/* Submit Button */}
+          {/* Submit */}
           <button
             type="submit"
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-xl shadow-md hover:shadow-lg transition duration-200 transform active:scale-[0.98]"
+            className="w-full bg-[#3B8C5A] hover:bg-[#2F7048] text-white font-semibold py-3 rounded-[10px] text-[14.5px] transition active:scale-[0.98] mt-1"
           >
             Sign In
           </button>
         </form>
 
-        <p className="text-center text-sm text-gray-600 mt-6">
+        {/* Footer */}
+        <p className="text-center text-[13px] text-[#888] mt-5">
           Don't have an account?{" "}
           <a
             href="/register"
-            className="text-blue-600 font-semibold hover:underline"
+            className="text-[#3B8C5A] font-medium hover:underline"
           >
             Sign up
           </a>
