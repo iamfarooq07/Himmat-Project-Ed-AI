@@ -1,5 +1,6 @@
 import React, { useContext, useState } from "react";
 import { UserContext } from "../context/context.jsx";
+import { Link } from "react-router-dom";
 
 function Register() {
   const [name, setName] = useState("");
@@ -36,21 +37,30 @@ function Register() {
     <div className="min-h-screen flex items-center justify-center bg-[#F7F5F2] p-6">
       <div className="bg-white w-full max-w-md rounded-[20px] border border-[#EAE8E3] px-8 py-9">
         {/* Logo Icon */}
-        <div className="flex justify-center mb-6">
-          <div className="w-11 h-11 bg-[#E8F4ED] rounded-xl flex items-center justify-center">
+        <div className="flex items-center justify-between mb-6">
+          {/* Back Button */}
+          <Link
+            to="/"
+            className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition"
+          >
             <svg
-              className="w-5 h-5 stroke-[#3B8C5A]"
-              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+              className="w-5 h-5"
               fill="none"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2}
             >
-              <path d="M12 2L2 7l10 5 10-5-10-5z" />
-              <path d="M2 17l10 5 10-5" />
-              <path d="M2 12l10 5 10-5" />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M15 19l-7-7 7-7"
+              />
             </svg>
-          </div>
+            <span>Back</span>
+          </Link>
+
+          {/* Logo/Icon */}
         </div>
 
         {/* Header */}

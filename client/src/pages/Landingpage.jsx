@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 const navigation = [
   { label: "Courses", path: "#courses" },
@@ -62,12 +63,19 @@ export default function LandingPage() {
 
           {/* Auth Buttons */}
           <div className="flex items-center gap-3">
-            <button className="text-[13.5px] font-medium text-[#666] hover:text-[#1A1A1A] px-3 py-2 transition">
+            <Link
+              to="/login"
+              className="text-[13.5px] font-medium text-[#666] hover:text-[#1A1A1A] px-3 py-2 transition"
+            >
               Login
-            </button>
-            <button className="h-9 px-4 bg-[#3B8C5A] text-white text-[13px] font-medium rounded-[9px] hover:bg-[#2F7048] transition">
+            </Link>
+
+            <Link
+              to="/register"
+              className="inline-flex items-center justify-center h-9 px-4 bg-[#3B8C5A] text-white text-[13px] font-medium rounded-[9px] hover:bg-[#2F7048] transition"
+            >
               Start Learning
-            </button>
+            </Link>
           </div>
         </div>
       </header>
