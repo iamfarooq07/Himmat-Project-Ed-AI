@@ -14,9 +14,21 @@ function Authcontext({ children }) {
       console.log(error);
     }
   };
+  const loginUser = async (userData) => {
+    try {
+      const res = await axios.post(
+        "http://localhost:3000/api/user/login",
+        userData,
+      );
+
+      return res.data;
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
-    <UserContext.Provider value={{ registerUser }}>
+    <UserContext.Provider value={{ registerUser, loginUser }}>
       {children}
     </UserContext.Provider>
   );

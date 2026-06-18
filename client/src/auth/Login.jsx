@@ -1,12 +1,28 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
+import { UserContext } from "../context/context.jsx";
 
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleSubmit = (e) => {
+  const { loginUser } = useContext(UserContext);
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log({ email, password });
+
+    try {
+      const data = await loginUser({
+        email,
+        password,
+      });
+
+      console.log("Success:", data);
+
+      setEmail("");
+      setPassword("");
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
@@ -97,6 +113,7 @@ function Login() {
           {/* Submit */}
           <button
             type="submit"
+            onClick={handleSubmit}
             className="w-full bg-[#3B8C5A] hover:bg-[#2F7048] text-white font-semibold py-3 rounded-[10px] text-[14.5px] transition active:scale-[0.98] mt-1"
           >
             Sign In
