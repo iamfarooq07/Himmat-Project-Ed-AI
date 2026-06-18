@@ -1,5 +1,6 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useContext } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { UserContext } from "../context/context.jsx";
 
 const navigation = [
   { label: "Courses", path: "#courses" },
@@ -35,6 +36,16 @@ const featureStyles = {
 };
 
 export default function LandingPage() {
+  const { user } = useContext(UserContext);
+  const navigate = useNavigate();
+
+  const handleGetStarted = () => {
+    if (user) {
+      navigate(user.role === "instructor" ? "/instructordashborad" : "/studentdashborad");
+    } else {
+      navigate("/register");
+    }
+  };
   return (
     <div className="min-h-screen bg-[#F7F5F2] font-sans antialiased text-[#1A1A1A]">
       {/* 1. Header / Navbar */}
@@ -63,19 +74,29 @@ export default function LandingPage() {
 
           {/* Auth Buttons */}
           <div className="flex items-center gap-3">
-            <Link
-              to="/login"
-              className="text-[13.5px] font-medium text-[#666] hover:text-[#1A1A1A] px-3 py-2 transition"
-            >
-              Login
-            </Link>
-
-            <Link
-              to="/register"
-              className="inline-flex items-center justify-center h-9 px-4 bg-[#3B8C5A] text-white text-[13px] font-medium rounded-[9px] hover:bg-[#2F7048] transition"
-            >
-              Start Learning
-            </Link>
+            {user ? (
+              <button
+                onClick={handleGetStarted}
+                className="inline-flex items-center justify-center h-9 px-4 bg-[#3B8C5A] text-white text-[13px] font-medium rounded-[9px] hover:bg-[#2F7048] transition"
+              >
+                Go to Dashboard
+              </button>
+            ) : (
+              <>
+                <Link
+                  to="/login"
+                  className="text-[13.5px] font-medium text-[#666] hover:text-[#1A1A1A] px-3 py-2 transition"
+                >
+                  Login
+                </Link>
+                <Link
+                  to="/register"
+                  className="inline-flex items-center justify-center h-9 px-4 bg-[#3B8C5A] text-white text-[13px] font-medium rounded-[9px] hover:bg-[#2F7048] transition"
+                >
+                  Start Learning
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </header>
@@ -93,7 +114,10 @@ export default function LandingPage() {
           beautiful, interactive tools and a structured curriculum.
         </p>
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
-          <button className="w-full sm:w-auto h-11 px-6 bg-[#3B8C5A] text-white text-[14px] font-medium rounded-[10px] hover:bg-[#2F7048] transition shadow-sm">
+          <button
+            onClick={handleGetStarted}
+            className="w-full sm:w-auto h-11 px-6 bg-[#3B8C5A] text-white text-[14px] font-medium rounded-[10px] hover:bg-[#2F7048] transition shadow-sm"
+          >
             Explore All Courses
           </button>
           <button className="w-full sm:w-auto h-11 px-6 bg-white border border-[#EAE8E3] text-[#1A1A1A] text-[14px] font-medium rounded-[10px] hover:bg-[#F0F0EC] transition">
@@ -148,7 +172,10 @@ export default function LandingPage() {
             Get unlimited access to over 100+ high-quality tracks today. Cancel
             anytime.
           </p>
-          <button className="h-10 px-6 bg-[#3B8C5A] text-white text-[13.5px] font-medium rounded-[9px] hover:bg-[#2F7048] transition">
+          <button
+            onClick={handleGetStarted}
+            className="h-10 px-6 bg-[#3B8C5A] text-white text-[13.5px] font-medium rounded-[9px] hover:bg-[#2F7048] transition"
+          >
             Create Free Account
           </button>
         </div>

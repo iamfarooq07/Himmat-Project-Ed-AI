@@ -1,66 +1,89 @@
 import React, { useContext, useState } from "react";
 import { UserContext } from "../context/context.jsx";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 function Register() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [role, setRole] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   const { registerUser } = useContext(UserContext);
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError("");
+
     if (!role) {
-      alert("Please select a role");
+      setError("Please select a role to continue.");
       return;
     }
+    if (password.length < 6) {
+      setError("Password must be at least 6 characters.");
+      return;
+    }
+
+    setLoading(true);
     try {
-      const data = await registerUser({
-        userName: name,
-        email,
-        password,
-        role,
-      });
-      console.log("Success:", data);
-      setName("");
-      setEmail("");
-      setPassword("");
-      setRole("");
-    } catch (error) {
-      console.error(error);
+      const data = await registerUser({ userName: name, email, password, role });
+
+      // Redirect based on role after successful register
+      if (data?.token) {
+        if (role === "instructor") {
+          navigate("/instructordashborad");
+        } else {
+          navigate("/studentdashborad");
+        }
+      }
+    } catch (err) {
+      const msg =
+        err?.response?.data?.message || "Registration failed. Please try again.";
+      setError(msg);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#F7F5F2] p-6">
       <div className="bg-white w-full max-w-md rounded-[20px] border border-[#EAE8E3] px-8 py-9">
-        {/* Logo Icon */}
+        {/* Top row: back button */}
         <div className="flex items-center justify-between mb-6">
-          {/* Back Button */}
           <Link
             to="/"
-            className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition"
+            className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition text-[13px] text-[#555]"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="w-5 h-5"
+              className="w-4 h-4"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
               strokeWidth={2}
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M15 19l-7-7 7-7"
-              />
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
             </svg>
-            <span>Back</span>
+            Back
           </Link>
-
-          {/* Logo/Icon */}
+          {/* Logo */}
+          <div className="w-9 h-9 bg-[#E8F4ED] rounded-[9px] flex items-center justify-center">
+            <svg
+              className="w-4 h-4 stroke-[#3B8C5A]"
+              viewBox="0 0 24 24"
+              fill="none"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M12 2L2 7l10 5 10-5-10-5z" />
+              <path d="M2 17l10 5 10-5" />
+              <path d="M2 12l10 5 10-5" />
+            </svg>
+          </div>
         </div>
 
         {/* Header */}
@@ -72,6 +95,23 @@ function Register() {
             Join thousands of learners today
           </p>
         </div>
+
+        {/* Error Alert */}
+        {error && (
+          <div className="mb-4 px-4 py-3 bg-red-50 border border-red-200 rounded-[10px] flex items-start gap-2">
+            <svg
+              className="w-4 h-4 text-red-500 flex-shrink-0 mt-0.5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2}
+            >
+              <circle cx="12" cy="12" r="10" />
+              <path d="M12 8v4M12 16h.01" />
+            </svg>
+            <p className="text-[13px] text-red-600">{error}</p>
+          </div>
+        )}
 
         <form className="space-y-4" onSubmit={handleSubmit}>
           {/* Name */}
@@ -86,6 +126,7 @@ function Register() {
               placeholder="Enter Your Name"
               className="w-full px-3.5 py-2.5 bg-[#FAFAF9] border border-[#E4E2DC] rounded-[10px] text-sm text-[#1A1A1A] placeholder-[#BDBAB4] focus:outline-none focus:border-[#3B8C5A] focus:bg-white transition"
               required
+              disabled={loading}
             />
           </div>
 
@@ -101,6 +142,7 @@ function Register() {
               placeholder="Enter Your Email"
               className="w-full px-3.5 py-2.5 bg-[#FAFAF9] border border-[#E4E2DC] rounded-[10px] text-sm text-[#1A1A1A] placeholder-[#BDBAB4] focus:outline-none focus:border-[#3B8C5A] focus:bg-white transition"
               required
+              disabled={loading}
             />
           </div>
 
@@ -109,14 +151,29 @@ function Register() {
             <label className="block text-[13px] font-medium text-[#444] mb-1.5">
               Password
             </label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="••••••••"
-              className="w-full px-3.5 py-2.5 bg-[#FAFAF9] border border-[#E4E2DC] rounded-[10px] text-sm text-[#1A1A1A] placeholder-[#BDBAB4] focus:outline-none focus:border-[#3B8C5A] focus:bg-white transition"
-              required
-            />
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Min. 6 characters"
+                className="w-full px-3.5 py-2.5 pr-10 bg-[#FAFAF9] border border-[#E4E2DC] rounded-[10px] text-sm text-[#1A1A1A] placeholder-[#BDBAB4] focus:outline-none focus:border-[#3B8C5A] focus:bg-white transition"
+                required
+                disabled={loading}
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword((p) => !p)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-[#AAA] hover:text-[#666] transition"
+                tabIndex={-1}
+              >
+                {showPassword ? (
+                  <i className="ti ti-eye-off text-[16px]" />
+                ) : (
+                  <i className="ti ti-eye text-[16px]" />
+                )}
+              </button>
+            </div>
           </div>
 
           {/* Role */}
@@ -130,6 +187,7 @@ function Register() {
                 onChange={(e) => setRole(e.target.value)}
                 className="w-full px-3.5 py-2.5 bg-[#FAFAF9] border border-[#E4E2DC] rounded-[10px] text-sm text-[#1A1A1A] focus:outline-none focus:border-[#3B8C5A] focus:bg-white transition appearance-none cursor-pointer"
                 required
+                disabled={loading}
               >
                 <option value="" disabled hidden>
                   Select your role
@@ -148,21 +206,29 @@ function Register() {
           {/* Submit */}
           <button
             type="submit"
-            className="w-full bg-[#3B8C5A] hover:bg-[#2F7048] text-white font-semibold py-3 rounded-[10px] text-[14.5px] transition active:scale-[0.98] mt-1"
+            disabled={loading}
+            className="w-full bg-[#3B8C5A] hover:bg-[#2F7048] disabled:opacity-60 disabled:cursor-not-allowed text-white font-semibold py-3 rounded-[10px] text-[14.5px] transition active:scale-[0.98] mt-1 flex items-center justify-center gap-2"
           >
-            Create Account
+            {loading ? (
+              <>
+                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                Creating Account...
+              </>
+            ) : (
+              "Create Account"
+            )}
           </button>
         </form>
 
         {/* Footer */}
         <p className="text-center text-[13px] text-[#888] mt-5">
           Already have an account?{" "}
-          <a
-            href="/login"
+          <Link
+            to="/login"
             className="text-[#3B8C5A] font-medium hover:underline"
           >
             Sign in
-          </a>
+          </Link>
         </p>
       </div>
     </div>
