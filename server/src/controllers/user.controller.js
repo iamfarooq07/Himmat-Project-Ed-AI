@@ -28,8 +28,8 @@ const userRegister = async (req, res) => {
 
         const token = jwt.sign(
             {
+                _id: user._id,
                 email: user.email,
-                password: user.password,
                 role: user.role,
             },
             process.env.SECRET_KEY,
@@ -62,8 +62,8 @@ const userLogin = async (req, res) => {
 
         const token = jwt.sign(
             {
+                _id: user._id,
                 email: user.email,
-                password: user.password,
                 role: user.role,
             },
             process.env.SECRET_KEY,

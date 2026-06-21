@@ -1,126 +1,134 @@
 import { Course } from "../models/course.model.js";
 
-const getCourse = async (req, res) => {
+// Get All Courses
+const getCourse = async (req, res, next) => {
     try {
         const courses = await Course.find();
 
-        if (courses.length === 0) {
-            return res.status(404).json({
-                message: "No courses found"
-            });
-        }
-
-        res.status(200).json({ message: "Courses fetched successfully", courses });
+        res.status(200).json({
+            success: true,
+            count: courses.length,
+            courses,
+        });
     } catch (error) {
-        res.status(500).json({ message: "Internal Server Error", error: error.message });
+        next(error);
     }
 };
 
-const getCourseById = async (req, res) => {
+// Get Course By ID
+const getCourseById = async (req, res, next) => {
     try {
-        const courseId = req.params.id;
+        const { id } = req.params;
 
-        if (!courseId) {
+        const course = await Course.findById(id);
+
+        if (!course) {
             return res.status(404).json({
-                message: "No course Id found"
+                success: false,
+                message: "Course not found",
             });
         }
-
-        const courses = await Course.findById(courseId);
 
         res.status(200).json({
-            message: "Course fetched successfully",
-            courses
+            success: true,
+            course,
         });
     } catch (error) {
-        res.status(500).json({
-            message: "Internal Server Error",
-            error: error.message
-        });
+        next(error);
     }
 };
 
-const postCourse = async (req, res) => {
+// Create Course
+const postCourse = async (req, res, next) => {
     try {
         const courseData = req.body;
 
-        if (!courseData) {
-            return res.status(404).json({
-                message: "course Not found"
+        if (Object.keys(courseData).length === 0) {
+            return res.status(400).json({
+                success: false,
+                message: "Course data is required",
             });
         }
 
-        const courses = await Course.create(courseData);
+        const course = await Course.create(courseData);
 
-        res.status(200).json({
-            message: "Course Create successfully",
-            courses
+        res.status(201).json({
+            success: true,
+            message: "Course created successfully",
+            course,
         });
     } catch (error) {
-        res.status(500).json({
-            message: "Internal Server Error",
-            error: error.message
-        });
+        next(error);
     }
 };
 
-const updateCourse = async (req, res) => {
+// Update Course
+const updateCourse = async (req, res, next) => {
     try {
+        const { id } = req.params;
         const courseData = req.body;
-        const courseId = req.params.id;
 
-        if (!courseData || !courseId) {
-            return res.status(401).json({ message: "Not Found" })
+        if (Object.keys(courseData).length === 0) {
+            return res.status(400).json({
+                success: false,
+                message: "Update data is required",
+            });
         }
 
-        const courses = await Course.findByIdAndUpdate(courseId, courseData, { new: true });
+        const course = await Course.findByIdAndUpdate(
+            id,
+            courseData,
+            {
+                new: true,
+                runValidators: true,
+            }
+        );
 
-        if (!courses) {
+        if (!course) {
             return res.status(404).json({
-                message: "Course not found"
+                success: false,
+                message: "Course not found",
             });
         }
 
         res.status(200).json({
+            success: true,
             message: "Course updated successfully",
-            courses
+            course,
         });
     } catch (error) {
-        res.status(500).json({
-            message: "Internal Server Error",
-            error: error.message
-        });
+        next(error);
     }
 };
 
-const deleteCourse = async (req, res) => {
+// Delete Course
+const deleteCourse = async (req, res, next) => {
     try {
-        const courseId = req.params.id;
+        const { id } = req.params;
 
-        if (!courseId) {
+        const course = await Course.findByIdAndDelete(id);
+
+        if (!course) {
             return res.status(404).json({
-                message: "course Not found"
-            });
-        };
-
-        const courses = await Course.findByIdAndDelete(courseId);
-
-        if (!courses) {
-            return res.status(404).json({
-                message: "Course not found"
+                success: false,
+                message: "Course not found",
             });
         }
 
         res.status(200).json({
-            message: "Course Deleted successfully",
-            courses
+            success: true,
+            message: "Course deleted successfully",
+            course,
         });
     } catch (error) {
-        res.status(500).json({
-            message: "Internal Server Error",
-            error: error.message
-        });
+        next(error);
     }
 };
 
-export { getCourse, getCourseById, postCourse, updateCourse, deleteCourse }
+export {
+    getCourse,
+    getCourseById,
+    postCourse,
+    updateCourse,
+    deleteCourse,
+};

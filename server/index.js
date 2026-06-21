@@ -5,6 +5,7 @@ import { dataBase } from "./src/config/db.js";
 import { route } from "./src/routes/user.route.js";
 import { courseRoute } from "./src/routes/course.route.js";
 import { authMiddleware } from "./src/middlewares/auth.middleware.js";
+import { errorMiddleware } from "./src/middlewares/error.middleware.js";
 
 dotenv.config();
 
@@ -20,6 +21,10 @@ app.use("/api/courses", authMiddleware, courseRoute)
 app.get("/", (req, res) => {
     res.send("Hello World")
 })
+
+// Error Handling Middleware
+app.use(errorMiddleware)
+
 dataBase().then(() => {
     app.listen(PORT, () => {
         console.log(`Server Connected On Port ${PORT}`);
