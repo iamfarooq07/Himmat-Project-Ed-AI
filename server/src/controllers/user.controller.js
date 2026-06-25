@@ -2,7 +2,7 @@ import { User } from "../models/user.model.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken"
 
-const userRegister = async (req, res) => {
+const userRegister = async (req, res, next) => {
 
     try {
         const { userName, email, password, role } = req.body;
@@ -40,11 +40,11 @@ const userRegister = async (req, res) => {
 
         return res.status(201).json({ message: "Register Successfully", user, token })
     } catch (error) {
-        res.status(500).json({ message: "Internet Error", error })
+        next(error)
     }
 }
 
-const userLogin = async (req, res) => {
+const userLogin = async (req, res, next) => {
     try {
         const { email, password } = req.body;
 
@@ -74,7 +74,7 @@ const userLogin = async (req, res) => {
 
         return res.status(201).json({ message: "Logged In Successfully", token })
     } catch (error) {
-        res.status(500).json({ message: "Internet Error", error })
+        next(error)
     }
 }
 

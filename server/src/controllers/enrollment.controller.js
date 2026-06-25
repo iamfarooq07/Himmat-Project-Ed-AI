@@ -1,6 +1,6 @@
 import { Enrollment } from "../models/enrollment.model.js";
 
-const enrollmentGet = async (req, res) => {
+const enrollmentGet = async (req, res, next) => {
     try {
         const enrollment = await Enrollment.find({ student: req.user._id });
 
@@ -12,11 +12,11 @@ const enrollmentGet = async (req, res) => {
 
         res.status(200).json({ message: "Enrollment fetched successfully", enrollment });
     } catch (error) {
-        res.status(500).json({ message: "Internal Server Error", error: error.message });
+        next(error)
     }
 };
 
-const enrollmentPost = async (req, res) => {
+const enrollmentPost = async (req, res, next) => {
     try {
         const alreadyEnrolled = await Enrollment.findOne({
             student: req.user._id,
@@ -31,7 +31,7 @@ const enrollmentPost = async (req, res) => {
         });
 
     } catch (error) {
-        res.status(500).json({ message: "Internal Server Error", error: error.message });
+        next(error)
     }
 };
 
