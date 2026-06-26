@@ -1,12 +1,12 @@
 import { Course } from "../models/course.model.js";
-import { apiRespones } from "../middlewares/apiRespones.middleware.js";
+import { apiResponse } from "../middlewares/apiRespones.middleware.js";
 
 // Get All Courses
 const getCourse = async (req, res, next) => {
     try {
         const courses = await Course.find();
 
-        return apiRespones(
+        return apiResponse(
             res,
             200,
             "Courses fetched successfully",
@@ -28,14 +28,14 @@ const getCourseById = async (req, res, next) => {
         const course = await Course.findById(id);
 
         if (!course) {
-            return apiRespones(
+            return apiResponse(
                 res,
                 404,
                 "Course not found"
             );
         }
 
-        return apiRespones(
+        return apiResponse(
             res,
             200,
             "Course fetched successfully",
@@ -52,7 +52,7 @@ const postCourse = async (req, res, next) => {
         const courseData = req.body;
 
         if (!courseData || Object.keys(courseData).length === 0) {
-            return apiRespones(
+            return apiResponse(
                 res,
                 400,
                 "Course data is required"
@@ -61,7 +61,7 @@ const postCourse = async (req, res, next) => {
 
         const course = await Course.create(courseData);
 
-        return apiRespones(
+        return apiResponse(
             res,
             201,
             "Course created successfully",
@@ -79,7 +79,7 @@ const updateCourse = async (req, res, next) => {
         const courseData = req.body;
 
         if (!courseData || Object.keys(courseData).length === 0) {
-            return apiRespones(
+            return apiResponse(
                 res,
                 400,
                 "Update data is required"
@@ -96,14 +96,14 @@ const updateCourse = async (req, res, next) => {
         );
 
         if (!course) {
-            return apiRespones(
+            return apiResponse(
                 res,
                 404,
                 "Course not found"
             );
         }
 
-        return apiRespones(
+        return apiResponse(
             res,
             200,
             "Course updated successfully",
@@ -122,14 +122,14 @@ const deleteCourse = async (req, res, next) => {
         const course = await Course.findByIdAndDelete(id);
 
         if (!course) {
-            return apiRespones(
+            return apiResponse(
                 res,
                 404,
                 "Course not found"
             );
         }
 
-        return apiRespones(
+        return apiResponse(
             res,
             200,
             "Course deleted successfully",

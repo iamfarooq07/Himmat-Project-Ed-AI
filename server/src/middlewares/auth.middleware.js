@@ -1,11 +1,12 @@
 import jwt from 'jsonwebtoken';
+import { apiResponse } from './apiRespones.middleware.js';
 
 export const authMiddleware = async (req, res, next) => {
 
     const authHeader = req.headers.authorization;
- 
+
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
-        return res.status(401).json({ message: 'No token provided, authorization denied' });
+        return apiResponse(res, 401, 'No token provided, authorization denied');
     }
 
     const token = authHeader.split(' ')[1];
@@ -17,7 +18,7 @@ export const authMiddleware = async (req, res, next) => {
 
         next();
     } catch (error) {
-        return res.status(401).json({ message: 'Token is not valid' });
+        return apiResponse(res, 401, 'Token is not valid');
     }
 };
 
