@@ -31,7 +31,7 @@ function Register() {
     try {
       const data = await registerUser({ userName: name, email, password, role });
 
-      // Redirect based on role after successful register
+      // apiResponse: register sends token in data.token field
       if (data?.token) {
         if (role === "instructor") {
           navigate("/instructordashborad");

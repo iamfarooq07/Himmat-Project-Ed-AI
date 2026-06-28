@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import { useState, useContext } from "react";
 import { UserContext } from "../context/context.jsx";
 import { useNavigate, Link } from "react-router-dom";
 
@@ -20,14 +20,19 @@ function Login() {
     try {
       const data = await loginUser({ email, password });
 
-      // Redirect based on role
-      if (data?.token) {
-        const role = data.role || parseRole(data.token);
+      // apiResponse: login sends token in data.data field
+      const token = data?.token || data?.data;
+
+      if (token) {
+        const payload = JSON.parse(atob(token.split(".")[1]));
+        const role = payload?.role;
         if (role === "instructor") {
           navigate("/instructordashborad");
         } else {
           navigate("/studentdashborad");
         }
+      } else {
+        setError("Login failed — no token received. Try again.");
       }
     } catch (err) {
       const msg =
@@ -38,19 +43,10 @@ function Login() {
     }
   };
 
-  // decode role from JWT if not in response directly
-  function parseRole(token) {
-    try {
-      return JSON.parse(atob(token.split(".")[1])).role;
-    } catch {
-      return "student";
-    }
-  }
-
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#F7F5F2] p-6">
       <div className="bg-white w-full max-w-md mx-auto rounded-[20px] border border-[#EAE8E3] px-8 py-9">
-        {/* Logo Icon */}
+        {/* Logo */}
         <div className="flex justify-center mb-6">
           <div className="w-11 h-11 bg-[#E8F4ED] rounded-xl flex items-center justify-center">
             <svg
@@ -78,7 +74,7 @@ function Login() {
           </p>
         </div>
 
-        {/* Error Alert */}
+        {/* Error */}
         {error && (
           <div className="mb-4 px-4 py-3 bg-red-50 border border-red-200 rounded-[10px] flex items-start gap-2">
             <svg
@@ -141,11 +137,9 @@ function Login() {
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-[#AAA] hover:text-[#666] transition"
                 tabIndex={-1}
               >
-                {showPassword ? (
-                  <i className="ti ti-eye-off text-[16px]" />
-                ) : (
-                  <i className="ti ti-eye text-[16px]" />
-                )}
+                <i
+                  className={`ti ${showPassword ? "ti-eye-off" : "ti-eye"} text-[16px]`}
+                />
               </button>
             </div>
           </div>

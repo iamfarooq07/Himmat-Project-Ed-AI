@@ -39,9 +39,11 @@ function Authcontext({ children }) {
 
   const registerUser = async (userData) => {
     const res = await axios.post("/api/user/register", userData);
-    const { token: newToken, user: newUser } = res.data;
+    // apiResponse structure: { success, message, data: <user>, token: <token> }
+    // register controller calls: apiResponse(res, 201, "msg", user, token)
+    const newToken = res.data?.token;
+    const newUser  = res.data?.data;
     if (newToken && newUser) {
-      // Save full user object including _id from response
       const userToSave = {
         _id: newUser._id,
         email: newUser.email,
@@ -58,7 +60,10 @@ function Authcontext({ children }) {
 
   const loginUser = async (userData) => {
     const res = await axios.post("/api/user/login", userData);
-    const { token: newToken } = res.data;
+    // apiResponse structure: { success, message, data: <token>, token: null }
+    // login controller calls: apiResponse(res, 201, "msg", token)
+    // so token lands in res.data.data
+    const newToken = res.data?.token || res.data?.data;
     if (newToken) {
       const decoded = parseJwt(newToken);
       const loggedUser = {

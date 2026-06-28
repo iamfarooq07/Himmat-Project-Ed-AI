@@ -2,6 +2,7 @@ import React, { useState, useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { UserContext } from "../context/context.jsx";
+import AiChat from "../components/AiChat.jsx";
 
 // ─── Category colors ───────────────────────────────────────────────────────────
 const categoryStyle = {
@@ -15,6 +16,7 @@ const categoryStyle = {
 const navItems = [
   { icon: "ti-layout-dashboard", label: "Dashboard" },
   { icon: "ti-books",            label: "Browse Courses" },
+  { icon: "ti-robot",            label: "AI Tutor" },
   { icon: "ti-certificate",      label: "Certificates" },
   { icon: "ti-settings",         label: "Settings" },
 ];
@@ -230,109 +232,116 @@ function StudentDashborad() {
             <h1 className="text-[20px] font-semibold text-[#1A1A1A]">
               {getGreeting()}, {user?.email ? user.email.split("@")[0] : "Student"}
             </h1>
-            <p className="text-[13px] text-[#999] mt-1">Browse and enroll in available courses</p>
+            <p className="text-[13px] text-[#999] mt-1">
+              {active === "AI Tutor" ? "Chat with your AI learning assistant" : "Browse and enroll in available courses"}
+            </p>
           </div>
           <button className="w-9 h-9 bg-white border border-[#EAE8E3] rounded-[9px] flex items-center justify-center hover:bg-[#F0F0EC] transition">
             <i className="ti ti-bell text-[#888] text-[18px]" />
           </button>
         </div>
 
-        {/* Stats */}
-        <div className="grid grid-cols-3 gap-3 mb-6">
-          <div className="bg-white border border-[#EAE8E3] rounded-xl p-4">
-            <p className="text-[12px] text-[#AAA] mb-1.5">Total Courses</p>
-            <p className="text-[22px] font-semibold text-[#1A1A1A]">{loading ? "—" : courses.length}</p>
-            <p className="text-[12px] text-[#3B8C5A] mt-1">Available to enroll</p>
+        {/* AI Tutor tab */}
+        {active === "AI Tutor" ? (
+          <AiChat />
+        ) : active === "Certificates" ? (
+          <div className="bg-white border border-[#EAE8E3] rounded-xl p-10 text-center">
+            <div className="w-12 h-12 bg-[#FEF4E4] rounded-full flex items-center justify-center mx-auto mb-3">
+              <i className="ti ti-certificate text-[#B07A1A] text-[22px]" />
+            </div>
+            <p className="text-[14px] font-medium text-[#555]">Certificates</p>
+            <p className="text-[12.5px] text-[#AAA] mt-1">Complete courses to earn certificates</p>
           </div>
-          <div className="bg-white border border-[#EAE8E3] rounded-xl p-4">
-            <p className="text-[12px] text-[#AAA] mb-1.5">Free Courses</p>
-            <p className="text-[22px] font-semibold text-[#1A1A1A]">{loading ? "—" : freeCount}</p>
-            <p className="text-[12px] text-[#3B8C5A] mt-1">No cost to join</p>
-          </div>
-          <div className="bg-white border border-[#EAE8E3] rounded-xl p-4">
-            <p className="text-[12px] text-[#AAA] mb-1.5">Premium Courses</p>
-            <p className="text-[22px] font-semibold text-[#1A1A1A]">{loading ? "—" : paidCount}</p>
-            <p className="text-[12px] text-[#3B8C5A] mt-1">Expert content</p>
-          </div>
-        </div>
-
-        {/* Search + Filter bar */}
-        <div className="flex flex-col sm:flex-row gap-3 mb-4">
-          <div className="relative flex-1">
-            <i className="ti ti-search absolute left-3 top-1/2 -translate-y-1/2 text-[#AAA] text-[15px]" />
-            <input
-              type="text"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search courses..."
-              className="w-full pl-9 pr-4 py-2.5 bg-white border border-[#EAE8E3] rounded-[10px] text-[13.5px] text-[#1A1A1A] placeholder-[#BDBAB4] focus:outline-none focus:border-[#3B8C5A] transition"
-            />
-          </div>
-          <div className="flex gap-2 flex-wrap">
-            {categories.map((cat) => (
-              <button
-                key={cat}
-                onClick={() => setFilterCat(cat)}
-                className={`px-3 py-2 rounded-[9px] text-[12.5px] font-medium transition border
-                  ${filterCat === cat
-                    ? "bg-[#3B8C5A] text-white border-[#3B8C5A]"
-                    : "bg-white text-[#666] border-[#EAE8E3] hover:border-[#3B8C5A] hover:text-[#3B8C5A]"}`}
-              >
-                {cat}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Course list header */}
-        <div className="flex justify-between items-center mb-3">
-          <h2 className="text-[15px] font-semibold text-[#1A1A1A]">
-            {active === "Dashboard" ? "All Courses" : "Browse Courses"}
-            {!loading && (
-              <span className="ml-2 text-[12px] font-normal text-[#AAA]">({filtered.length})</span>
-            )}
-          </h2>
-        </div>
-
-        {/* Error */}
-        {error && (
-          <div className="mb-4 px-4 py-3 bg-red-50 border border-red-200 rounded-[10px] flex items-center gap-2">
-            <i className="ti ti-alert-circle text-red-500 text-[16px]" />
-            <p className="text-[13px] text-red-600">{error}</p>
-            <button
-              onClick={() => window.location.reload()}
-              className="ml-auto text-[12px] text-red-500 underline"
-            >
-              Retry
-            </button>
-          </div>
-        )}
-
-        {/* Loading skeletons */}
-        {loading && (
-          <div className="flex flex-col gap-2.5">
-            {[1, 2, 3, 4].map((i) => <SkeletonCard key={i} />)}
-          </div>
-        )}
-
-        {/* Empty state */}
-        {!loading && !error && filtered.length === 0 && (
+        ) : active === "Settings" ? (
           <div className="bg-white border border-[#EAE8E3] rounded-xl p-10 text-center">
             <div className="w-12 h-12 bg-[#F0EDE8] rounded-full flex items-center justify-center mx-auto mb-3">
-              <i className="ti ti-books text-[#AAA] text-[22px]" />
+              <i className="ti ti-settings text-[#AAA] text-[22px]" />
             </div>
-            <p className="text-[14px] font-medium text-[#555]">No courses found</p>
-            <p className="text-[12.5px] text-[#AAA] mt-1">Try changing your search or filter</p>
+            <p className="text-[14px] font-medium text-[#555]">Settings</p>
+            <p className="text-[12.5px] text-[#AAA] mt-1">Settings panel coming soon</p>
           </div>
-        )}
+        ) : (
+          <>
+            {/* Stats */}
+            <div className="grid grid-cols-3 gap-3 mb-6">
+              <div className="bg-white border border-[#EAE8E3] rounded-xl p-4">
+                <p className="text-[12px] text-[#AAA] mb-1.5">Total Courses</p>
+                <p className="text-[22px] font-semibold text-[#1A1A1A]">{loading ? "—" : courses.length}</p>
+                <p className="text-[12px] text-[#3B8C5A] mt-1">Available to enroll</p>
+              </div>
+              <div className="bg-white border border-[#EAE8E3] rounded-xl p-4">
+                <p className="text-[12px] text-[#AAA] mb-1.5">Free Courses</p>
+                <p className="text-[22px] font-semibold text-[#1A1A1A]">{loading ? "—" : freeCount}</p>
+                <p className="text-[12px] text-[#3B8C5A] mt-1">No cost to join</p>
+              </div>
+              <div className="bg-white border border-[#EAE8E3] rounded-xl p-4">
+                <p className="text-[12px] text-[#AAA] mb-1.5">Premium Courses</p>
+                <p className="text-[22px] font-semibold text-[#1A1A1A]">{loading ? "—" : paidCount}</p>
+                <p className="text-[12px] text-[#3B8C5A] mt-1">Expert content</p>
+              </div>
+            </div>
 
-        {/* Course cards */}
-        {!loading && !error && filtered.length > 0 && (
-          <div className="flex flex-col gap-2.5">
-            {filtered.map((c) => (
-              <CourseCard key={c._id} course={c} onClick={setSelectedCourse} />
-            ))}
-          </div>
+            {/* Search + Filter bar */}
+            <div className="flex flex-col sm:flex-row gap-3 mb-4">
+              <div className="relative flex-1">
+                <i className="ti ti-search absolute left-3 top-1/2 -translate-y-1/2 text-[#AAA] text-[15px]" />
+                <input
+                  type="text"
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  placeholder="Search courses..."
+                  className="w-full pl-9 pr-4 py-2.5 bg-white border border-[#EAE8E3] rounded-[10px] text-[13.5px] text-[#1A1A1A] placeholder-[#BDBAB4] focus:outline-none focus:border-[#3B8C5A] transition"
+                />
+              </div>
+              <div className="flex gap-2 flex-wrap">
+                {categories.map((cat) => (
+                  <button key={cat} onClick={() => setFilterCat(cat)}
+                    className={`px-3 py-2 rounded-[9px] text-[12.5px] font-medium transition border
+                      ${filterCat === cat
+                        ? "bg-[#3B8C5A] text-white border-[#3B8C5A]"
+                        : "bg-white text-[#666] border-[#EAE8E3] hover:border-[#3B8C5A] hover:text-[#3B8C5A]"}`}>
+                    {cat}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Course list header */}
+            <div className="flex justify-between items-center mb-3">
+              <h2 className="text-[15px] font-semibold text-[#1A1A1A]">
+                All Courses
+                {!loading && <span className="ml-2 text-[12px] font-normal text-[#AAA]">({filtered.length})</span>}
+              </h2>
+            </div>
+
+            {error && (
+              <div className="mb-4 px-4 py-3 bg-red-50 border border-red-200 rounded-[10px] flex items-center gap-2">
+                <i className="ti ti-alert-circle text-red-500 text-[16px]" />
+                <p className="text-[13px] text-red-600">{error}</p>
+                <button onClick={() => window.location.reload()} className="ml-auto text-[12px] text-red-500 underline">Retry</button>
+              </div>
+            )}
+
+            {loading && <div className="flex flex-col gap-2.5">{[1, 2, 3, 4].map((i) => <SkeletonCard key={i} />)}</div>}
+
+            {!loading && !error && filtered.length === 0 && (
+              <div className="bg-white border border-[#EAE8E3] rounded-xl p-10 text-center">
+                <div className="w-12 h-12 bg-[#F0EDE8] rounded-full flex items-center justify-center mx-auto mb-3">
+                  <i className="ti ti-books text-[#AAA] text-[22px]" />
+                </div>
+                <p className="text-[14px] font-medium text-[#555]">No courses found</p>
+                <p className="text-[12.5px] text-[#AAA] mt-1">Try changing your search or filter</p>
+              </div>
+            )}
+
+            {!loading && !error && filtered.length > 0 && (
+              <div className="flex flex-col gap-2.5">
+                {filtered.map((c) => (
+                  <CourseCard key={c._id} course={c} onClick={setSelectedCourse} />
+                ))}
+              </div>
+            )}
+          </>
         )}
       </main>
 
