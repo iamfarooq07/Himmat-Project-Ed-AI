@@ -124,7 +124,7 @@ function ConfirmModal({ course, onConfirm, onCancel, loading }) {
   );
 }
 
-// ─── Course Form (inline panel, not modal) ─────────────────────────────────────
+// ─── Course Form ───────────────────────────────────────────────────────────────
 function CourseForm({ initial, onClose, onSave }) {
   const [form, setForm] = useState(
     initial
@@ -175,7 +175,6 @@ function CourseForm({ initial, onClose, onSave }) {
 
   return (
     <div className="bg-white border border-[#EAE8E3] rounded-2xl p-6">
-      {/* Header */}
       <div className="flex items-center justify-between mb-5">
         <div>
           <h2 className="text-[16px] font-semibold text-[#1A1A1A]">
@@ -189,6 +188,7 @@ function CourseForm({ initial, onClose, onSave }) {
         </div>
         <button
           onClick={onClose}
+          type="button"
           className="w-8 h-8 bg-[#F7F5F2] hover:bg-[#EEE] border border-[#EAE8E3] rounded-[8px] flex items-center justify-center text-[#888] transition"
         >
           <i className="ti ti-x text-[15px]" />
@@ -274,7 +274,6 @@ function CourseForm({ initial, onClose, onSave }) {
           </div>
         </div>
 
-        {/* Preview badge */}
         <div className="flex items-center gap-3 p-3 bg-[#F7F5F2] rounded-[10px] border border-[#EAE8E3]">
           {(() => {
             const s = getStyle(form.category);
@@ -455,11 +454,14 @@ function InstructorDashboard() {
   const fetchCourses = async () => {
     setLoading(true);
     setApiError("");
+
     try {
       const res = await axios.get("/api/courses");
-      setCourses(res.data.courses || []);
+
+      console.log(res.data);
+
+      setCourses(res.data?.data?.courses || []);
     } catch (err) {
-      // 404 just means no courses yet — not a real error
       if (err?.response?.status === 404) {
         setCourses([]);
       } else {
@@ -479,15 +481,13 @@ function InstructorDashboard() {
     navigate("/login");
   };
 
-  // When sidebar "Create Course" is clicked, switch to that view
   const handleSetActive = (label) => {
     if (label === "Create Course") {
-      setEditTarget(null); // clear any previous edit
+      setEditTarget(null);
     }
     setActive(label);
   };
 
-  // Create or Update
   const handleSave = async (formData, id) => {
     const payload = { ...formData, instructor: user._id };
     if (id) {
@@ -498,10 +498,10 @@ function InstructorDashboard() {
       showToast("Course created successfully!");
     }
     await fetchCourses();
-    setActive("My Courses"); // go back to course list after save
+    setActive("My Courses");
+    console.log(payload);
   };
 
-  // Delete
   const handleDelete = async () => {
     setDeleting(true);
     try {
@@ -516,7 +516,6 @@ function InstructorDashboard() {
     }
   };
 
-  // Edit: jump to Create Course view with pre-filled data
   const handleEdit = (course) => {
     setEditTarget(course);
     setActive("Create Course");
@@ -524,70 +523,8 @@ function InstructorDashboard() {
 
   const freeCount = courses.filter((c) => c.price === 0).length;
 
-  // ── What to render in main area based on active tab ──────────────────────────
-  const renderContent = () => {
-    // Create Course tab
-    if (active === "Create Course") {
-      return (
-        <CourseForm
-          initial={editTarget}
-          onClose={() => {
-            setActive("My Courses");
-            setEditTarget(null);
-          }}
-          onSave={handleSave}
-        />
-      );
-    }
-
-    // Students tab placeholder
-    if (active === "Students") {
-      return (
-        <div className="bg-white border border-[#EAE8E3] rounded-xl p-10 text-center">
-          <div className="w-12 h-12 bg-[#E6F0FB] rounded-full flex items-center justify-center mx-auto mb-3">
-            <i className="ti ti-users text-[#2A6CB5] text-[22px]" />
-          </div>
-          <p className="text-[14px] font-medium text-[#555]">Students</p>
-          <p className="text-[12.5px] text-[#AAA] mt-1">
-            Student management coming soon
-          </p>
-        </div>
-      );
-    }
-
-    // AI Assistant tab
-    if (active === "AI Assistant") {
-      return <AiChat />;
-    }
-
-    // Settings tab placeholder
-    if (active === "Settings") {
-      return (
-        <div className="bg-white border border-[#EAE8E3] rounded-xl p-10 text-center">
-          <div className="w-12 h-12 bg-[#F0EDE8] rounded-full flex items-center justify-center mx-auto mb-3">
-            <i className="ti ti-settings text-[#AAA] text-[22px]" />
-          </div>
-          <p className="text-[14px] font-medium text-[#555]">Settings</p>
-          <p className="text-[12.5px] text-[#AAA] mt-1">
-            Settings panel coming soon
-          </p>
-        </div>
-      );
-    }
-    return (
-      <div className="bg-white border border-[#EAE8E3] rounded-xl p-10 text-center">
-        <div className="w-12 h-12 bg-[#F0EDE8] rounded-full flex items-center justify-center mx-auto mb-3">
-          <i className="ti ti-settings text-[#AAA] text-[22px]" />
-        </div>
-        <p className="text-[14px] font-medium text-[#555]">Settings</p>
-        <p className="text-[12.5px] text-[#AAA] mt-1">
-          Settings panel coming soon
-        </p>
-      </div>
-    );
-  };
-  // Dashboard & My Courses — show course list
-  return (
+  // ── Helper functions inside layout ───────────────────────────────────────────
+  const renderDashboardOrCourses = () => (
     <>
       {/* Stats */}
       <div className="grid grid-cols-3 gap-3 mb-6">
@@ -619,7 +556,7 @@ function InstructorDashboard() {
       {/* List header */}
       <div className="flex justify-between items-center mb-3.5">
         <h2 className="text-[15px] font-semibold text-[#1A1A1A]">
-          All Courses
+          All Courses{" "}
           {!loading && (
             <span className="ml-2 text-[12px] font-normal text-[#AAA]">
               ({courses.length})
@@ -662,8 +599,7 @@ function InstructorDashboard() {
             onClick={() => setActive("Create Course")}
             className="h-9 px-5 bg-[#3B8C5A] text-white text-[13px] font-medium rounded-[9px] hover:bg-[#2F7048] transition inline-flex items-center gap-1.5"
           >
-            <i className="ti ti-circle-plus text-[14px]" />
-            Create Course
+            <i className="ti ti-circle-plus text-[14px]" /> Create Course
           </button>
         </div>
       )}
@@ -683,6 +619,54 @@ function InstructorDashboard() {
     </>
   );
 
+  const renderContent = () => {
+    if (active === "Dashboard" || active === "My Courses") {
+      return renderDashboardOrCourses();
+    }
+    if (active === "Create Course") {
+      return (
+        <CourseForm
+          initial={editTarget}
+          onClose={() => {
+            setActive("My Courses");
+            setEditTarget(null);
+          }}
+          onSave={handleSave}
+        />
+      );
+    }
+    if (active === "Students") {
+      return (
+        <div className="bg-white border border-[#EAE8E3] rounded-xl p-10 text-center">
+          <div className="w-12 h-12 bg-[#E6F0FB] rounded-full flex items-center justify-center mx-auto mb-3">
+            <i className="ti ti-users text-[#2A6CB5] text-[22px]" />
+          </div>
+          <p className="text-[14px] font-medium text-[#555]">Students</p>
+          <p className="text-[12.5px] text-[#AAA] mt-1">
+            Student management coming soon
+          </p>
+        </div>
+      );
+    }
+    if (active === "AI Assistant") {
+      return <AiChat />;
+    }
+    if (active === "Settings") {
+      return (
+        <div className="bg-white border border-[#EAE8E3] rounded-xl p-10 text-center">
+          <div className="w-12 h-12 bg-[#F0EDE8] rounded-full flex items-center justify-center mx-auto mb-3">
+            <i className="ti ti-settings text-[#AAA] text-[22px]" />
+          </div>
+          <p className="text-[14px] font-medium text-[#555]">Settings</p>
+          <p className="text-[12.5px] text-[#AAA] mt-1">
+            Settings panel coming soon
+          </p>
+        </div>
+      );
+    }
+  };
+
+  // ── Single Main Return ───────────────────────────────────────────────────────
   return (
     <div className="min-h-screen bg-[#F7F5F2] flex">
       <Sidebar
