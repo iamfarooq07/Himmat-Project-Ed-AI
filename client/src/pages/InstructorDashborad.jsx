@@ -457,9 +457,6 @@ function InstructorDashboard() {
 
     try {
       const res = await axios.get("/api/courses");
-
-      console.log(res.data);
-
       setCourses(res.data?.data?.courses || []);
     } catch (err) {
       if (err?.response?.status === 404) {
@@ -499,7 +496,6 @@ function InstructorDashboard() {
     }
     await fetchCourses();
     setActive("My Courses");
-    console.log(payload);
   };
 
   const handleDelete = async () => {

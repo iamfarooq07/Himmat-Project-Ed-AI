@@ -197,7 +197,8 @@ function StudentDashborad() {
       setError("");
       try {
         const res = await axios.get("/api/courses");
-        setCourses(res.data.courses || []);
+        // apiResponse structure: { success, message, data: { count, courses } }
+        setCourses(res.data?.data?.courses || []);
       } catch (err) {
         setError(err?.response?.data?.message || "Failed to load courses.");
       } finally {
