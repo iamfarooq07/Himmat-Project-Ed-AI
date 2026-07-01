@@ -68,29 +68,6 @@ function Register() {
 
   return (
     <div className="min-h-screen bg-[#F7F5F2] flex flex-col font-sans antialiased">
-      {/* Navbar */}
-      <header className="bg-white border-b border-[#EAE8E3]">
-        <div className="max-w-5xl mx-auto px-6 h-14 flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
-            <div className="w-[32px] h-[32px] bg-[#E8F4ED] rounded-[8px] flex items-center justify-center">
-              <i className="ti ti-layers-subtract text-[#3B8C5A] text-[15px]" />
-            </div>
-            <span className="text-[15px] font-semibold text-[#1A1A1A]">
-              LearnHub
-            </span>
-          </div>
-          <p className="text-[13px] text-[#888]">
-            Already have an account?{" "}
-            <Link
-              to="/login"
-              className="text-[#3B8C5A] font-medium hover:underline"
-            >
-              Sign in
-            </Link>
-          </p>
-        </div>
-      </header>
-
       {/* Body */}
       <div className="flex-1 flex items-center justify-center px-6 py-10">
         <div className="w-full max-w-[520px]">
@@ -130,7 +107,7 @@ function Register() {
                     type="text"
                     value={firstName}
                     onChange={(e) => setFirstName(e.target.value)}
-                    placeholder="Ali"
+                    placeholder="Enter Your First Name"
                     className={inp}
                     required
                     disabled={loading}
@@ -144,7 +121,7 @@ function Register() {
                     type="text"
                     value={lastName}
                     onChange={(e) => setLastName(e.target.value)}
-                    placeholder="Khan"
+                    placeholder="Enter Your Last Name"
                     className={inp}
                     required
                     disabled={loading}
@@ -161,7 +138,7 @@ function Register() {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="you@example.com"
+                  placeholder="Enter Your Email"
                   className={inp}
                   required
                   disabled={loading}

@@ -436,14 +436,18 @@ function Sidebar({ active, setActive, user, onLogout }) {
 
 // ─── Main Component ────────────────────────────────────────────────────────────
 function InstructorDashboard() {
-  const [active, setActive] = useState("Dashboard");
-  const [courses, setCourses] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [apiError, setApiError] = useState("");
-  const [editTarget, setEditTarget] = useState(null);
+  const [active, setActive]             = useState("Dashboard");
+  const [courses, setCourses]           = useState([]);
+  const [loading, setLoading]           = useState(true);
+  const [apiError, setApiError]         = useState("");
+  const [editTarget, setEditTarget]     = useState(null);
   const [deleteTarget, setDeleteTarget] = useState(null);
-  const [deleting, setDeleting] = useState(false);
-  const [toast, setToast] = useState(null);
+  const [deleting, setDeleting]         = useState(false);
+  const [toast, setToast]               = useState(null);
+  // Students tab state
+  const [students, setStudents]         = useState([]);
+  const [studentsLoading, setStudentsLoading] = useState(false);
+  const [studentsError, setStudentsError]     = useState("");
 
   const { user, logoutUser } = useContext(UserContext);
   const navigate = useNavigate();
@@ -482,7 +486,23 @@ function InstructorDashboard() {
     if (label === "Create Course") {
       setEditTarget(null);
     }
+    if (label === "Students") {
+      fetchStudents();
+    }
     setActive(label);
+  };
+
+  const fetchStudents = async () => {
+    setStudentsLoading(true);
+    setStudentsError("");
+    try {
+      const res = await axios.get("/api/enrollments/my-students");
+      setStudents(res.data?.data?.students || []);
+    } catch (err) {
+      setStudentsError(err?.response?.data?.message || "Failed to load students.");
+    } finally {
+      setStudentsLoading(false);
+    }
   };
 
   const handleSave = async (formData, id) => {
@@ -633,14 +653,89 @@ function InstructorDashboard() {
     }
     if (active === "Students") {
       return (
-        <div className="bg-white border border-[#EAE8E3] rounded-xl p-10 text-center">
-          <div className="w-12 h-12 bg-[#E6F0FB] rounded-full flex items-center justify-center mx-auto mb-3">
-            <i className="ti ti-users text-[#2A6CB5] text-[22px]" />
+        <div>
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-[15px] font-semibold text-[#1A1A1A]">
+              Enrolled Students
+              {!studentsLoading && (
+                <span className="ml-2 text-[12px] font-normal text-[#AAA]">({students.length})</span>
+              )}
+            </h2>
+            <button
+              onClick={fetchStudents}
+              className="flex items-center gap-1.5 text-[12.5px] text-[#3B8C5A] hover:underline"
+            >
+              <i className="ti ti-refresh text-[14px]" /> Refresh
+            </button>
           </div>
-          <p className="text-[14px] font-medium text-[#555]">Students</p>
-          <p className="text-[12.5px] text-[#AAA] mt-1">
-            Student management coming soon
-          </p>
+
+          {studentsError && (
+            <div className="mb-4 px-4 py-3 bg-red-50 border border-red-200 rounded-[10px] flex items-center gap-2">
+              <i className="ti ti-alert-circle text-red-500 text-[16px]" />
+              <p className="text-[13px] text-red-600">{studentsError}</p>
+            </div>
+          )}
+
+          {studentsLoading && (
+            <div className="flex flex-col gap-2.5">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="bg-white border border-[#EAE8E3] rounded-xl p-4 flex gap-3 animate-pulse">
+                  <div className="w-9 h-9 rounded-full bg-[#F0EDE8] flex-shrink-0" />
+                  <div className="flex-1 space-y-2">
+                    <div className="h-3.5 bg-[#F0EDE8] rounded w-1/3" />
+                    <div className="h-3 bg-[#F0EDE8] rounded w-1/2" />
+                  </div>
+                  <div className="w-20 h-6 bg-[#F0EDE8] rounded-full" />
+                </div>
+              ))}
+            </div>
+          )}
+
+          {!studentsLoading && !studentsError && students.length === 0 && (
+            <div className="bg-white border border-[#EAE8E3] rounded-xl p-10 text-center">
+              <div className="w-12 h-12 bg-[#E6F0FB] rounded-full flex items-center justify-center mx-auto mb-3">
+                <i className="ti ti-users text-[#2A6CB5] text-[22px]" />
+              </div>
+              <p className="text-[14px] font-medium text-[#555]">No students yet</p>
+              <p className="text-[12.5px] text-[#AAA] mt-1">Students will appear here after they enroll</p>
+            </div>
+          )}
+
+          {!studentsLoading && !studentsError && students.length > 0 && (
+            <div className="flex flex-col gap-2.5">
+              {students.map((s) => {
+                const initials = s.student?.userName
+                  ? s.student.userName.slice(0, 2).toUpperCase()
+                  : s.student?.email?.slice(0, 2).toUpperCase() || "??";
+                const cStyle = getStyle(s.course?.category);
+                return (
+                  <div key={s.enrollmentId} className="bg-white border border-[#EAE8E3] rounded-xl p-4 flex items-center gap-3.5">
+                    {/* Avatar */}
+                    <div className="w-10 h-10 rounded-full bg-[#E8F4ED] flex items-center justify-center text-[13px] font-semibold text-[#3B8C5A] flex-shrink-0">
+                      {initials}
+                    </div>
+                    {/* Info */}
+                    <div className="flex-1 min-w-0">
+                      <p className="text-[14px] font-medium text-[#1A1A1A] truncate">
+                        {s.student?.userName || "Student"}
+                      </p>
+                      <p className="text-[12px] text-[#AAA] truncate">{s.student?.email}</p>
+                    </div>
+                    {/* Course badge */}
+                    <div className={`px-2.5 py-1 rounded-[8px] ${cStyle.bg} flex-shrink-0`}>
+                      <p className={`text-[11.5px] font-medium ${cStyle.text} truncate max-w-[120px]`}>
+                        {s.course?.title || "Course"}
+                      </p>
+                    </div>
+                    {/* Enrolled date */}
+                    <p className="text-[11.5px] text-[#AAA] flex-shrink-0">
+                      {new Date(s.enrolledAt).toLocaleDateString("en-PK", { day: "numeric", month: "short", year: "numeric" })}
+                    </p>
+                  </div>
+                );
+              })}
+            </div>
+          )}
         </div>
       );
     }

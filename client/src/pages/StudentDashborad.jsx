@@ -44,9 +44,11 @@ function SkeletonCard() {
 }
 
 // ─── Course detail modal ───────────────────────────────────────────────────────
-function CourseModal({ course, onClose }) {
+function CourseModal({ course, onClose, enrollments, onEnroll, enrolling, enrollMsg }) {
   if (!course) return null;
   const s = getStyle(course.category);
+  const isEnrolled = enrollments.includes(course._id);
+
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 p-4"
@@ -93,16 +95,49 @@ function CourseModal({ course, onClose }) {
           </div>
         </div>
 
-        <button className="w-full h-10 bg-[#3B8C5A] hover:bg-[#2F7048] text-white text-[13.5px] font-medium rounded-[10px] transition">
-          Enroll Now
-        </button>
+        {/* Enroll feedback */}
+        {enrollMsg === "success" && (
+          <div className="mb-3 px-4 py-2.5 bg-[#E8F4ED] border border-[#B6D9C5] rounded-[10px] flex items-center gap-2 text-[13px] text-[#2F7048]">
+            <i className="ti ti-circle-check text-[15px]" /> Enrolled successfully!
+          </div>
+        )}
+        {enrollMsg === "already" && (
+          <div className="mb-3 px-4 py-2.5 bg-[#FEF4E4] border border-[#F0D5A0] rounded-[10px] flex items-center gap-2 text-[13px] text-[#B07A1A]">
+            <i className="ti ti-info-circle text-[15px]" /> You are already enrolled.
+          </div>
+        )}
+        {enrollMsg === "error" && (
+          <div className="mb-3 px-4 py-2.5 bg-red-50 border border-red-200 rounded-[10px] flex items-center gap-2 text-[13px] text-red-600">
+            <i className="ti ti-alert-circle text-[15px]" /> Enrollment failed. Try again.
+          </div>
+        )}
+
+        {isEnrolled ? (
+          <button
+            disabled
+            className="w-full h-10 bg-[#E8F4ED] text-[#3B8C5A] text-[13.5px] font-medium rounded-[10px] flex items-center justify-center gap-2 cursor-default"
+          >
+            <i className="ti ti-circle-check text-[16px]" /> Already Enrolled
+          </button>
+        ) : (
+          <button
+            onClick={() => onEnroll(course._id)}
+            disabled={enrolling}
+            className="w-full h-10 bg-[#3B8C5A] hover:bg-[#2F7048] disabled:opacity-60 text-white text-[13.5px] font-medium rounded-[10px] transition flex items-center justify-center gap-2"
+          >
+            {enrolling
+              ? <><div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />Enrolling...</>
+              : <><i className="ti ti-plus text-[15px]" />Enroll Now</>
+            }
+          </button>
+        )}
       </div>
     </div>
   );
 }
 
 // ─── Course card ───────────────────────────────────────────────────────────────
-function CourseCard({ course, onClick }) {
+function CourseCard({ course, onClick, isEnrolled }) {
   const s = getStyle(course.category);
   return (
     <div
@@ -121,6 +156,11 @@ function CourseCard({ course, onClick }) {
         </p>
       </div>
       <div className="flex items-center gap-2 flex-shrink-0">
+        {isEnrolled && (
+          <span className="text-[11px] px-2.5 py-1 rounded-full font-medium bg-[#E8F4ED] text-[#2F7048] flex items-center gap-1">
+            <i className="ti ti-circle-check text-[12px]" /> Enrolled
+          </span>
+        )}
         <span className={`text-[11px] px-2.5 py-1 rounded-full font-medium ${s.bg} ${s.text}`}>
           {course.price === 0 ? "Free" : `$${course.price}`}
         </span>
@@ -181,16 +221,19 @@ function Sidebar({ active, setActive, user, onLogout }) {
 function StudentDashborad() {
   const [active, setActive]         = useState("Dashboard");
   const [courses, setCourses]       = useState([]);
+  const [enrollments, setEnrollments] = useState([]); // my enrolled course IDs
   const [loading, setLoading]       = useState(true);
   const [error, setError]           = useState("");
   const [search, setSearch]         = useState("");
   const [filterCat, setFilterCat]   = useState("All");
   const [selectedCourse, setSelectedCourse] = useState(null);
+  const [enrolling, setEnrolling]   = useState(false);
+  const [enrollMsg, setEnrollMsg]   = useState("");  // success/error toast
 
   const { user, logoutUser } = useContext(UserContext);
   const navigate = useNavigate();
 
-  // Fetch courses from backend
+  // Fetch all courses
   useEffect(() => {
     const fetchCourses = async () => {
       setLoading(true);
@@ -208,7 +251,38 @@ function StudentDashborad() {
     fetchCourses();
   }, []);
 
+  // Fetch my enrollments to know which courses I'm already in
+  useEffect(() => {
+    const fetchEnrollments = async () => {
+      try {
+        const res = await axios.get("/api/enrollments/my");
+        const list = res.data?.data || [];
+        setEnrollments(list.map(e => e.course?._id || e.course));
+      } catch {
+        // 404 = no enrollments yet, that's fine
+        setEnrollments([]);
+      }
+    };
+    fetchEnrollments();
+  }, []);
+
   const handleLogout = () => { logoutUser(); navigate("/login"); };
+
+  // Enroll in a course
+  const handleEnroll = async (courseId) => {
+    setEnrolling(true);
+    setEnrollMsg("");
+    try {
+      await axios.post(`/api/enrollments/${courseId}`);
+      setEnrollments(prev => [...prev, courseId]);
+      setEnrollMsg("success");
+    } catch (err) {
+      const msg = err?.response?.data?.message || "Enrollment failed.";
+      setEnrollMsg(msg === "You are already enrolled in this course." ? "already" : "error");
+    } finally {
+      setEnrolling(false);
+    }
+  };
 
   // Filter logic
   const categories = ["All", ...Object.keys(categoryStyle)];
@@ -338,7 +412,12 @@ function StudentDashborad() {
             {!loading && !error && filtered.length > 0 && (
               <div className="flex flex-col gap-2.5">
                 {filtered.map((c) => (
-                  <CourseCard key={c._id} course={c} onClick={setSelectedCourse} />
+                  <CourseCard
+                    key={c._id}
+                    course={c}
+                    onClick={setSelectedCourse}
+                    isEnrolled={enrollments.includes(c._id)}
+                  />
                 ))}
               </div>
             )}
@@ -347,7 +426,14 @@ function StudentDashborad() {
       </main>
 
       {/* Course detail modal */}
-      <CourseModal course={selectedCourse} onClose={() => setSelectedCourse(null)} />
+      <CourseModal
+        course={selectedCourse}
+        onClose={() => { setSelectedCourse(null); setEnrollMsg(""); }}
+        enrollments={enrollments}
+        onEnroll={handleEnroll}
+        enrolling={enrolling}
+        enrollMsg={enrollMsg}
+      />
     </div>
   );
 }
