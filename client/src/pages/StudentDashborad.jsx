@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { UserContext } from "../context/context.jsx";
 import AiChat from "../components/AiChat.jsx";
+import { toast } from "react-toastify";
 
 // ─── Category colors ───────────────────────────────────────────────────────────
 const categoryStyle = {
@@ -233,6 +234,15 @@ function CourseCard({ course, onClick, isEnrolled }) {
 
 // ─── Sidebar ───────────────────────────────────────────────────────────────────
 function Sidebar({ active, setActive, user, onLogout }) {
+  const logoutUser = () => {
+    toast.success("Logout Successfully", {
+      autoClose: 1000,
+    });
+    if (onLogout) {
+      onLogout();
+    }
+  };
+
   return (
     <aside className="w-[220px] bg-white border-r border-[#EAE8E3] flex flex-col px-4 py-6 fixed top-0 left-0 h-full z-30">
       <div className="flex items-center gap-2.5 px-2 mb-6">
@@ -250,7 +260,15 @@ function Sidebar({ active, setActive, user, onLogout }) {
             key={item.label}
             onClick={() => setActive(item.label)}
             className={`flex items-center gap-2.5 px-2.5 py-2 rounded-[9px] text-[13.5px] transition text-left w-full
-              ${active === item.label ? "bg-[#E8F4ED] text-[#2F7048] font-medium" : "text-[#666] hover:bg-[#F0F0EC]"}`}
+              ${
+                active === item.label
+                  ? item.label === "Create Course"
+                    ? "bg-[#3B8C5A] text-white font-medium"
+                    : "bg-[#E8F4ED] text-[#2F7048] font-medium"
+                  : item.label === "Create Course"
+                    ? "text-[#3B8C5A] hover:bg-[#E8F4ED] border border-[#3B8C5A]/30"
+                    : "text-[#666] hover:bg-[#F0F0EC]"
+              }`}
           >
             <i className={`ti ${item.icon} text-[17px]`} />
             {item.label}
@@ -260,18 +278,19 @@ function Sidebar({ active, setActive, user, onLogout }) {
 
       <div className="mt-auto space-y-2">
         <div className="flex items-center gap-2.5 px-2.5 py-2">
-          <div className="w-9 h-9 rounded-full bg-[#E8F4ED] flex items-center justify-center text-[13px] font-semibold text-[#3B8C5A] flex-shrink-0">
+          <div className="w-9 h-9 rounded-full bg-[#FEF4E4] flex items-center justify-center text-[13px] font-semibold text-[#B07A1A] flex-shrink-0">
             {getInitials(user?.email)}
           </div>
           <div className="min-w-0">
             <p className="text-[13px] font-medium text-[#1A1A1A] truncate">
-              {user?.email || "Student"}
+              {user?.email || "Instructor"}
             </p>
             <p className="text-[11.5px] text-[#AAA]">Student</p>
           </div>
         </div>
+
         <button
-          onClick={onLogout}
+          onClick={logoutUser}
           className="w-full flex items-center gap-2 px-2.5 py-2 rounded-[9px] text-[13px] text-red-500 hover:bg-red-50 transition"
         >
           <i className="ti ti-logout text-[16px]" />

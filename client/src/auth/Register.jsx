@@ -1,6 +1,7 @@
 import { useState, useContext } from "react";
 import { UserContext } from "../context/context.jsx";
 import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 function Register() {
   const [firstName, setFirstName] = useState("");
@@ -53,11 +54,17 @@ function Register() {
           role === "instructor" ? "/instructordashborad" : "/studentdashborad",
         );
       }
+      toast.success("Registration Successfully", {
+        autoClose: 1000,
+      });
     } catch (err) {
       setError(
         err?.response?.data?.message ||
           "Registration failed. Please try again.",
       );
+      toast.error("Registration failed. Please try again.", {
+        autoClose: 1000,
+      });
     } finally {
       setLoading(false);
     }
