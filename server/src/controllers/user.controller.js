@@ -66,7 +66,12 @@ const userLogin = async (req, res, next) => {
             return apiResponse(res, 400, "Your Email is Not Match")
         };
 
+
         const checkPassword = await bcrypt.compare(password, user.password);
+
+        if (!checkPassword) {
+            return apiResponse(res, 401, "Your Password is Not Match")
+        }
 
         const token = jwt.sign(
             {
