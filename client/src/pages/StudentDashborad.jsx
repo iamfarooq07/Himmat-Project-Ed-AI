@@ -6,28 +6,57 @@ import AiChat from "../components/AiChat.jsx";
 
 // ─── Category colors ───────────────────────────────────────────────────────────
 const categoryStyle = {
-  Programming: { bg: "bg-[#E8F4ED]", text: "text-[#3B8C5A]", bar: "bg-[#3B8C5A]", icon: "ti-code" },
-  Design:      { bg: "bg-[#FBEAF0]", text: "text-[#A03560]", bar: "bg-[#D4507A]", icon: "ti-palette" },
-  Business:    { bg: "bg-[#FEF4E4]", text: "text-[#B07A1A]", bar: "bg-[#C88A20]", icon: "ti-briefcase" },
-  Marketing:   { bg: "bg-[#E6F0FB]", text: "text-[#2A6CB5]", bar: "bg-[#3A7DC9]", icon: "ti-speakerphone" },
-  Other:       { bg: "bg-[#F0EDE8]", text: "text-[#777]",    bar: "bg-[#AAA]",    icon: "ti-book" },
+  Programming: {
+    bg: "bg-[#E8F4ED]",
+    text: "text-[#3B8C5A]",
+    bar: "bg-[#3B8C5A]",
+    icon: "ti-code",
+  },
+  Design: {
+    bg: "bg-[#FBEAF0]",
+    text: "text-[#A03560]",
+    bar: "bg-[#D4507A]",
+    icon: "ti-palette",
+  },
+  Business: {
+    bg: "bg-[#FEF4E4]",
+    text: "text-[#B07A1A]",
+    bar: "bg-[#C88A20]",
+    icon: "ti-briefcase",
+  },
+  Marketing: {
+    bg: "bg-[#E6F0FB]",
+    text: "text-[#2A6CB5]",
+    bar: "bg-[#3A7DC9]",
+    icon: "ti-speakerphone",
+  },
+  Other: {
+    bg: "bg-[#F0EDE8]",
+    text: "text-[#777]",
+    bar: "bg-[#AAA]",
+    icon: "ti-book",
+  },
 };
 
 const navItems = [
   { icon: "ti-layout-dashboard", label: "Dashboard" },
-  { icon: "ti-books",            label: "Browse Courses" },
-  { icon: "ti-robot",            label: "AI Tutor" },
-  { icon: "ti-certificate",      label: "Certificates" },
-  { icon: "ti-settings",         label: "Settings" },
+  { icon: "ti-books", label: "Browse Courses" },
+  { icon: "ti-robot", label: "AI Tutor" },
+  { icon: "ti-certificate", label: "Certificates" },
+  { icon: "ti-settings", label: "Settings" },
 ];
 
 // ─── Helpers ───────────────────────────────────────────────────────────────────
-function getInitials(email = "") { return email ? email.slice(0, 2).toUpperCase() : "U"; }
+function getInitials(email = "") {
+  return email ? email.slice(0, 2).toUpperCase() : "U";
+}
 function getGreeting() {
   const h = new Date().getHours();
   return h < 12 ? "Good morning" : h < 17 ? "Good afternoon" : "Good evening";
 }
-function getStyle(category) { return categoryStyle[category] || categoryStyle.Other; }
+function getStyle(category) {
+  return categoryStyle[category] || categoryStyle.Other;
+}
 
 // ─── Skeleton loader ───────────────────────────────────────────────────────────
 function SkeletonCard() {
@@ -44,7 +73,14 @@ function SkeletonCard() {
 }
 
 // ─── Course detail modal ───────────────────────────────────────────────────────
-function CourseModal({ course, onClose, enrollments, onEnroll, enrolling, enrollMsg }) {
+function CourseModal({
+  course,
+  onClose,
+  enrollments,
+  onEnroll,
+  enrolling,
+  enrollMsg,
+}) {
   if (!course) return null;
   const s = getStyle(course.category);
   const isEnrolled = enrollments.includes(course._id);
@@ -61,23 +97,34 @@ function CourseModal({ course, onClose, enrollments, onEnroll, enrolling, enroll
         {/* Header */}
         <div className="flex items-start justify-between gap-3 mb-4">
           <div className="flex items-center gap-3">
-            <div className={`w-12 h-12 ${s.bg} rounded-[10px] flex items-center justify-center flex-shrink-0`}>
+            <div
+              className={`w-12 h-12 ${s.bg} rounded-[10px] flex items-center justify-center flex-shrink-0`}
+            >
               <i className={`ti ${s.icon} ${s.text} text-[22px]`} />
             </div>
             <div>
-              <h3 className="text-[16px] font-semibold text-[#1A1A1A] leading-tight">{course.title}</h3>
-              <span className={`text-[11px] font-medium px-2 py-0.5 rounded-full ${s.bg} ${s.text} mt-1 inline-block`}>
+              <h3 className="text-[16px] font-semibold text-[#1A1A1A] leading-tight">
+                {course.title}
+              </h3>
+              <span
+                className={`text-[11px] font-medium px-2 py-0.5 rounded-full ${s.bg} ${s.text} mt-1 inline-block`}
+              >
                 {course.category}
               </span>
             </div>
           </div>
-          <button onClick={onClose} className="text-[#AAA] hover:text-[#555] transition flex-shrink-0">
+          <button
+            onClick={onClose}
+            className="text-[#AAA] hover:text-[#555] transition flex-shrink-0"
+          >
             <i className="ti ti-x text-[18px]" />
           </button>
         </div>
 
         {/* Description */}
-        <p className="text-[13px] text-[#555] leading-relaxed mb-4">{course.description}</p>
+        <p className="text-[13px] text-[#555] leading-relaxed mb-4">
+          {course.description}
+        </p>
 
         {/* Meta */}
         <div className="grid grid-cols-2 gap-3 mb-5">
@@ -98,17 +145,20 @@ function CourseModal({ course, onClose, enrollments, onEnroll, enrolling, enroll
         {/* Enroll feedback */}
         {enrollMsg === "success" && (
           <div className="mb-3 px-4 py-2.5 bg-[#E8F4ED] border border-[#B6D9C5] rounded-[10px] flex items-center gap-2 text-[13px] text-[#2F7048]">
-            <i className="ti ti-circle-check text-[15px]" /> Enrolled successfully!
+            <i className="ti ti-circle-check text-[15px]" /> Enrolled
+            successfully!
           </div>
         )}
         {enrollMsg === "already" && (
           <div className="mb-3 px-4 py-2.5 bg-[#FEF4E4] border border-[#F0D5A0] rounded-[10px] flex items-center gap-2 text-[13px] text-[#B07A1A]">
-            <i className="ti ti-info-circle text-[15px]" /> You are already enrolled.
+            <i className="ti ti-info-circle text-[15px]" /> You are already
+            enrolled.
           </div>
         )}
         {enrollMsg === "error" && (
           <div className="mb-3 px-4 py-2.5 bg-red-50 border border-red-200 rounded-[10px] flex items-center gap-2 text-[13px] text-red-600">
-            <i className="ti ti-alert-circle text-[15px]" /> Enrollment failed. Try again.
+            <i className="ti ti-alert-circle text-[15px]" /> Enrollment failed.
+            Try again.
           </div>
         )}
 
@@ -125,10 +175,17 @@ function CourseModal({ course, onClose, enrollments, onEnroll, enrolling, enroll
             disabled={enrolling}
             className="w-full h-10 bg-[#3B8C5A] hover:bg-[#2F7048] disabled:opacity-60 text-white text-[13.5px] font-medium rounded-[10px] transition flex items-center justify-center gap-2"
           >
-            {enrolling
-              ? <><div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />Enrolling...</>
-              : <><i className="ti ti-plus text-[15px]" />Enroll Now</>
-            }
+            {enrolling ? (
+              <>
+                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                Enrolling...
+              </>
+            ) : (
+              <>
+                <i className="ti ti-plus text-[15px]" />
+                Enroll Now
+              </>
+            )}
           </button>
         )}
       </div>
@@ -144,7 +201,9 @@ function CourseCard({ course, onClick, isEnrolled }) {
       onClick={() => onClick(course)}
       className="bg-white border border-[#EAE8E3] rounded-xl p-4 flex items-center gap-3.5 cursor-pointer hover:border-[#3B8C5A]/40 hover:shadow-sm transition group"
     >
-      <div className={`w-11 h-11 ${s.bg} rounded-[10px] flex items-center justify-center flex-shrink-0`}>
+      <div
+        className={`w-11 h-11 ${s.bg} rounded-[10px] flex items-center justify-center flex-shrink-0`}
+      >
         <i className={`ti ${s.icon} ${s.text} text-[20px]`} />
       </div>
       <div className="flex-1 min-w-0">
@@ -161,7 +220,9 @@ function CourseCard({ course, onClick, isEnrolled }) {
             <i className="ti ti-circle-check text-[12px]" /> Enrolled
           </span>
         )}
-        <span className={`text-[11px] px-2.5 py-1 rounded-full font-medium ${s.bg} ${s.text}`}>
+        <span
+          className={`text-[11px] px-2.5 py-1 rounded-full font-medium ${s.bg} ${s.text}`}
+        >
           {course.price === 0 ? "Free" : `$${course.price}`}
         </span>
         <i className="ti ti-chevron-right text-[#CCC] text-[14px] group-hover:text-[#3B8C5A] transition" />
@@ -178,7 +239,9 @@ function Sidebar({ active, setActive, user, onLogout }) {
         <div className="w-[34px] h-[34px] bg-[#E8F4ED] rounded-[9px] flex items-center justify-center">
           <i className="ti ti-layers-subtract text-[#3B8C5A] text-[17px]" />
         </div>
-        <span className="text-[15px] font-semibold text-[#1A1A1A]">LearnHub</span>
+        <span className="text-[15px] font-semibold text-[#1A1A1A]">
+          LMS With AI
+        </span>
       </div>
 
       <nav className="flex flex-col gap-1">
@@ -201,7 +264,9 @@ function Sidebar({ active, setActive, user, onLogout }) {
             {getInitials(user?.email)}
           </div>
           <div className="min-w-0">
-            <p className="text-[13px] font-medium text-[#1A1A1A] truncate">{user?.email || "Student"}</p>
+            <p className="text-[13px] font-medium text-[#1A1A1A] truncate">
+              {user?.email || "Student"}
+            </p>
             <p className="text-[11.5px] text-[#AAA]">Student</p>
           </div>
         </div>
@@ -219,16 +284,16 @@ function Sidebar({ active, setActive, user, onLogout }) {
 
 // ─── Main component ────────────────────────────────────────────────────────────
 function StudentDashborad() {
-  const [active, setActive]         = useState("Dashboard");
-  const [courses, setCourses]       = useState([]);
+  const [active, setActive] = useState("Dashboard");
+  const [courses, setCourses] = useState([]);
   const [enrollments, setEnrollments] = useState([]); // my enrolled course IDs
-  const [loading, setLoading]       = useState(true);
-  const [error, setError]           = useState("");
-  const [search, setSearch]         = useState("");
-  const [filterCat, setFilterCat]   = useState("All");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [search, setSearch] = useState("");
+  const [filterCat, setFilterCat] = useState("All");
   const [selectedCourse, setSelectedCourse] = useState(null);
-  const [enrolling, setEnrolling]   = useState(false);
-  const [enrollMsg, setEnrollMsg]   = useState("");  // success/error toast
+  const [enrolling, setEnrolling] = useState(false);
+  const [enrollMsg, setEnrollMsg] = useState(""); // success/error toast
 
   const { user, logoutUser } = useContext(UserContext);
   const navigate = useNavigate();
@@ -257,7 +322,7 @@ function StudentDashborad() {
       try {
         const res = await axios.get("/api/enrollments/my");
         const list = res.data?.data || [];
-        setEnrollments(list.map(e => e.course?._id || e.course));
+        setEnrollments(list.map((e) => e.course?._id || e.course));
       } catch {
         // 404 = no enrollments yet, that's fine
         setEnrollments([]);
@@ -266,7 +331,10 @@ function StudentDashborad() {
     fetchEnrollments();
   }, []);
 
-  const handleLogout = () => { logoutUser(); navigate("/login"); };
+  const handleLogout = () => {
+    logoutUser();
+    navigate("/login");
+  };
 
   // Enroll in a course
   const handleEnroll = async (courseId) => {
@@ -274,11 +342,15 @@ function StudentDashborad() {
     setEnrollMsg("");
     try {
       await axios.post(`/api/enrollments/${courseId}`);
-      setEnrollments(prev => [...prev, courseId]);
+      setEnrollments((prev) => [...prev, courseId]);
       setEnrollMsg("success");
     } catch (err) {
       const msg = err?.response?.data?.message || "Enrollment failed.";
-      setEnrollMsg(msg === "You are already enrolled in this course." ? "already" : "error");
+      setEnrollMsg(
+        msg === "You are already enrolled in this course."
+          ? "already"
+          : "error",
+      );
     } finally {
       setEnrolling(false);
     }
@@ -293,22 +365,30 @@ function StudentDashborad() {
   });
 
   // Stats
-  const freeCount  = courses.filter((c) => c.price === 0).length;
-  const paidCount  = courses.length - freeCount;
+  const freeCount = courses.filter((c) => c.price === 0).length;
+  const paidCount = courses.length - freeCount;
 
   return (
     <div className="min-h-screen bg-[#F7F5F2] flex">
-      <Sidebar active={active} setActive={setActive} user={user} onLogout={handleLogout} />
+      <Sidebar
+        active={active}
+        setActive={setActive}
+        user={user}
+        onLogout={handleLogout}
+      />
 
       <main className="ml-[220px] flex-1 p-7">
         {/* Topbar */}
         <div className="flex justify-between items-start mb-7">
           <div>
             <h1 className="text-[20px] font-semibold text-[#1A1A1A]">
-              {getGreeting()}, {user?.email ? user.email.split("@")[0] : "Student"}
+              {getGreeting()},{" "}
+              {user?.email ? user.email.split("@")[0] : "Student"}
             </h1>
             <p className="text-[13px] text-[#999] mt-1">
-              {active === "AI Tutor" ? "Chat with your AI learning assistant" : "Browse and enroll in available courses"}
+              {active === "AI Tutor"
+                ? "Chat with your AI learning assistant"
+                : "Browse and enroll in available courses"}
             </p>
           </div>
           <button className="w-9 h-9 bg-white border border-[#EAE8E3] rounded-[9px] flex items-center justify-center hover:bg-[#F0F0EC] transition">
@@ -325,7 +405,9 @@ function StudentDashborad() {
               <i className="ti ti-certificate text-[#B07A1A] text-[22px]" />
             </div>
             <p className="text-[14px] font-medium text-[#555]">Certificates</p>
-            <p className="text-[12.5px] text-[#AAA] mt-1">Complete courses to earn certificates</p>
+            <p className="text-[12.5px] text-[#AAA] mt-1">
+              Complete courses to earn certificates
+            </p>
           </div>
         ) : active === "Settings" ? (
           <div className="bg-white border border-[#EAE8E3] rounded-xl p-10 text-center">
@@ -333,7 +415,9 @@ function StudentDashborad() {
               <i className="ti ti-settings text-[#AAA] text-[22px]" />
             </div>
             <p className="text-[14px] font-medium text-[#555]">Settings</p>
-            <p className="text-[12.5px] text-[#AAA] mt-1">Settings panel coming soon</p>
+            <p className="text-[12.5px] text-[#AAA] mt-1">
+              Settings panel coming soon
+            </p>
           </div>
         ) : (
           <>
@@ -341,18 +425,32 @@ function StudentDashborad() {
             <div className="grid grid-cols-3 gap-3 mb-6">
               <div className="bg-white border border-[#EAE8E3] rounded-xl p-4">
                 <p className="text-[12px] text-[#AAA] mb-1.5">Total Courses</p>
-                <p className="text-[22px] font-semibold text-[#1A1A1A]">{loading ? "—" : courses.length}</p>
-                <p className="text-[12px] text-[#3B8C5A] mt-1">Available to enroll</p>
+                <p className="text-[22px] font-semibold text-[#1A1A1A]">
+                  {loading ? "—" : courses.length}
+                </p>
+                <p className="text-[12px] text-[#3B8C5A] mt-1">
+                  Available to enroll
+                </p>
               </div>
               <div className="bg-white border border-[#EAE8E3] rounded-xl p-4">
                 <p className="text-[12px] text-[#AAA] mb-1.5">Free Courses</p>
-                <p className="text-[22px] font-semibold text-[#1A1A1A]">{loading ? "—" : freeCount}</p>
-                <p className="text-[12px] text-[#3B8C5A] mt-1">No cost to join</p>
+                <p className="text-[22px] font-semibold text-[#1A1A1A]">
+                  {loading ? "—" : freeCount}
+                </p>
+                <p className="text-[12px] text-[#3B8C5A] mt-1">
+                  No cost to join
+                </p>
               </div>
               <div className="bg-white border border-[#EAE8E3] rounded-xl p-4">
-                <p className="text-[12px] text-[#AAA] mb-1.5">Premium Courses</p>
-                <p className="text-[22px] font-semibold text-[#1A1A1A]">{loading ? "—" : paidCount}</p>
-                <p className="text-[12px] text-[#3B8C5A] mt-1">Expert content</p>
+                <p className="text-[12px] text-[#AAA] mb-1.5">
+                  Premium Courses
+                </p>
+                <p className="text-[22px] font-semibold text-[#1A1A1A]">
+                  {loading ? "—" : paidCount}
+                </p>
+                <p className="text-[12px] text-[#3B8C5A] mt-1">
+                  Expert content
+                </p>
               </div>
             </div>
 
@@ -370,11 +468,16 @@ function StudentDashborad() {
               </div>
               <div className="flex gap-2 flex-wrap">
                 {categories.map((cat) => (
-                  <button key={cat} onClick={() => setFilterCat(cat)}
+                  <button
+                    key={cat}
+                    onClick={() => setFilterCat(cat)}
                     className={`px-3 py-2 rounded-[9px] text-[12.5px] font-medium transition border
-                      ${filterCat === cat
-                        ? "bg-[#3B8C5A] text-white border-[#3B8C5A]"
-                        : "bg-white text-[#666] border-[#EAE8E3] hover:border-[#3B8C5A] hover:text-[#3B8C5A]"}`}>
+                      ${
+                        filterCat === cat
+                          ? "bg-[#3B8C5A] text-white border-[#3B8C5A]"
+                          : "bg-white text-[#666] border-[#EAE8E3] hover:border-[#3B8C5A] hover:text-[#3B8C5A]"
+                      }`}
+                  >
                     {cat}
                   </button>
                 ))}
@@ -385,7 +488,11 @@ function StudentDashborad() {
             <div className="flex justify-between items-center mb-3">
               <h2 className="text-[15px] font-semibold text-[#1A1A1A]">
                 All Courses
-                {!loading && <span className="ml-2 text-[12px] font-normal text-[#AAA]">({filtered.length})</span>}
+                {!loading && (
+                  <span className="ml-2 text-[12px] font-normal text-[#AAA]">
+                    ({filtered.length})
+                  </span>
+                )}
               </h2>
             </div>
 
@@ -393,19 +500,34 @@ function StudentDashborad() {
               <div className="mb-4 px-4 py-3 bg-red-50 border border-red-200 rounded-[10px] flex items-center gap-2">
                 <i className="ti ti-alert-circle text-red-500 text-[16px]" />
                 <p className="text-[13px] text-red-600">{error}</p>
-                <button onClick={() => window.location.reload()} className="ml-auto text-[12px] text-red-500 underline">Retry</button>
+                <button
+                  onClick={() => window.location.reload()}
+                  className="ml-auto text-[12px] text-red-500 underline"
+                >
+                  Retry
+                </button>
               </div>
             )}
 
-            {loading && <div className="flex flex-col gap-2.5">{[1, 2, 3, 4].map((i) => <SkeletonCard key={i} />)}</div>}
+            {loading && (
+              <div className="flex flex-col gap-2.5">
+                {[1, 2, 3, 4].map((i) => (
+                  <SkeletonCard key={i} />
+                ))}
+              </div>
+            )}
 
             {!loading && !error && filtered.length === 0 && (
               <div className="bg-white border border-[#EAE8E3] rounded-xl p-10 text-center">
                 <div className="w-12 h-12 bg-[#F0EDE8] rounded-full flex items-center justify-center mx-auto mb-3">
                   <i className="ti ti-books text-[#AAA] text-[22px]" />
                 </div>
-                <p className="text-[14px] font-medium text-[#555]">No courses found</p>
-                <p className="text-[12.5px] text-[#AAA] mt-1">Try changing your search or filter</p>
+                <p className="text-[14px] font-medium text-[#555]">
+                  No courses found
+                </p>
+                <p className="text-[12.5px] text-[#AAA] mt-1">
+                  Try changing your search or filter
+                </p>
               </div>
             )}
 
@@ -428,7 +550,10 @@ function StudentDashborad() {
       {/* Course detail modal */}
       <CourseModal
         course={selectedCourse}
-        onClose={() => { setSelectedCourse(null); setEnrollMsg(""); }}
+        onClose={() => {
+          setSelectedCourse(null);
+          setEnrollMsg("");
+        }}
         enrollments={enrollments}
         onEnroll={handleEnroll}
         enrolling={enrolling}

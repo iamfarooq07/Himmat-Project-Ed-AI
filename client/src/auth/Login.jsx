@@ -1,6 +1,7 @@
 import { useState, useContext } from "react";
 import { UserContext } from "../context/context.jsx";
 import { useNavigate, Link } from "react-router-dom";
+import { toast } from "react-toastify";
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -18,6 +19,8 @@ function Login() {
     setLoading(true);
     try {
       const data = await loginUser({ email, password });
+      console.log("password", password);
+      console.log("data", data);
 
       // apiResponse: login sends token in data.data field
       const token = data?.token || data?.data;
@@ -25,11 +28,19 @@ function Login() {
       if (token) {
         const payload = JSON.parse(atob(token.split(".")[1]));
         const role = payload?.role;
+
+        toast.success("Login Successfully", {
+          autoClose: 1000,
+        });
+
         navigate(
           role === "instructor" ? "/instructordashborad" : "/studentdashborad",
         );
       } else {
         setError("Login failed — no token received. Try again.");
+        toast.error("Login failed", {
+          autoClose: 1000,
+        });
       }
     } catch (err) {
       setError(

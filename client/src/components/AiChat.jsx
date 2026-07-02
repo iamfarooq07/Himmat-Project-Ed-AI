@@ -17,7 +17,10 @@ function renderText(text) {
           }
           if (part.startsWith("`") && part.endsWith("`")) {
             return (
-              <code key={pi} className="bg-black/10 px-1 py-0.5 rounded text-[12px] font-mono">
+              <code
+                key={pi}
+                className="bg-black/10 px-1 py-0.5 rounded text-[12px] font-mono"
+              >
                 {part.slice(1, -1)}
               </code>
             );
@@ -36,15 +39,25 @@ function MessageBubble({ msg }) {
   return (
     <div className={`flex gap-2.5 ${isUser ? "flex-row-reverse" : "flex-row"}`}>
       {/* Avatar */}
-      <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 text-[12px] font-semibold
-        ${isUser ? "bg-[#3B8C5A] text-white" : "bg-[#E8F4ED] text-[#3B8C5A]"}`}>
-        {isUser ? <i className="ti ti-user text-[14px]" /> : <i className="ti ti-robot text-[14px]" />}
+      <div
+        className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 text-[12px] font-semibold
+        ${isUser ? "bg-[#3B8C5A] text-white" : "bg-[#E8F4ED] text-[#3B8C5A]"}`}
+      >
+        {isUser ? (
+          <i className="ti ti-user text-[14px]" />
+        ) : (
+          <i className="ti ti-robot text-[14px]" />
+        )}
       </div>
       {/* Bubble */}
-      <div className={`max-w-[78%] px-4 py-2.5 rounded-2xl text-[13.5px] leading-relaxed
-        ${isUser
-          ? "bg-[#3B8C5A] text-white rounded-tr-sm"
-          : "bg-white border border-[#EAE8E3] text-[#1A1A1A] rounded-tl-sm"}`}>
+      <div
+        className={`max-w-[78%] px-4 py-2.5 rounded-2xl text-[13.5px] leading-relaxed
+        ${
+          isUser
+            ? "bg-[#3B8C5A] text-white rounded-tr-sm"
+            : "bg-white border border-[#EAE8E3] text-[#1A1A1A] rounded-tl-sm"
+        }`}
+      >
         {msg.role === "assistant" ? renderText(msg.content) : msg.content}
       </div>
     </div>
@@ -59,9 +72,18 @@ function TypingIndicator() {
         <i className="ti ti-robot text-[#3B8C5A] text-[14px]" />
       </div>
       <div className="bg-white border border-[#EAE8E3] px-4 py-3 rounded-2xl rounded-tl-sm flex items-center gap-1">
-        <span className="w-2 h-2 bg-[#3B8C5A] rounded-full animate-bounce" style={{ animationDelay: "0ms" }} />
-        <span className="w-2 h-2 bg-[#3B8C5A] rounded-full animate-bounce" style={{ animationDelay: "150ms" }} />
-        <span className="w-2 h-2 bg-[#3B8C5A] rounded-full animate-bounce" style={{ animationDelay: "300ms" }} />
+        <span
+          className="w-2 h-2 bg-[#3B8C5A] rounded-full animate-bounce"
+          style={{ animationDelay: "0ms" }}
+        />
+        <span
+          className="w-2 h-2 bg-[#3B8C5A] rounded-full animate-bounce"
+          style={{ animationDelay: "150ms" }}
+        />
+        <span
+          className="w-2 h-2 bg-[#3B8C5A] rounded-full animate-bounce"
+          style={{ animationDelay: "300ms" }}
+        />
       </div>
     </div>
   );
@@ -77,13 +99,13 @@ const SUGGESTIONS = [
 
 // ─── Main AiChat component ────────────────────────────────────────────────────
 export default function AiChat() {
-  const [messages, setMessages] = useState([]);   // { role, content }[]
-  const [input, setInput]       = useState("");
-  const [loading, setLoading]   = useState(false);
-  const [error, setError]       = useState("");
-  const bottomRef               = useRef(null);
-  const inputRef                = useRef(null);
-  const { user }                = useContext(UserContext);
+  const [messages, setMessages] = useState([]); // { role, content }[]
+  const [input, setInput] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const bottomRef = useRef(null);
+  const inputRef = useRef(null);
+  const { user } = useContext(UserContext);
 
   // Auto-scroll to bottom on new messages
   useEffect(() => {
@@ -114,7 +136,8 @@ export default function AiChat() {
       const aiMsg = { role: "assistant", content: res.data.response };
       setMessages((prev) => [...prev, aiMsg]);
     } catch (err) {
-      const errMsg = err?.response?.data?.error || "Failed to get response. Try again.";
+      const errMsg =
+        err?.response?.data?.error || "Failed to get response. Try again.";
       setError(errMsg);
       // Remove the user message on error so they can retry
       setMessages(messages);
@@ -148,10 +171,14 @@ export default function AiChat() {
             <i className="ti ti-robot text-[#3B8C5A] text-[18px]" />
           </div>
           <div>
-            <p className="text-[14px] font-semibold text-[#1A1A1A]">LearnHub AI</p>
+            <p className="text-[14px] font-semibold text-[#1A1A1A]">
+              Learning Management System AI
+            </p>
             <div className="flex items-center gap-1.5">
               <span className="w-1.5 h-1.5 bg-[#3B8C5A] rounded-full" />
-              <p className="text-[11.5px] text-[#3B8C5A]">Online · Powered by Groq</p>
+              <p className="text-[11.5px] text-[#3B8C5A]">
+                Online · Powered by LMS
+              </p>
             </div>
           </div>
         </div>
@@ -177,7 +204,8 @@ export default function AiChat() {
               Hi {user?.email?.split("@")[0] || "there"}, I'm your AI Tutor
             </h3>
             <p className="text-[13px] text-[#999] mb-6 max-w-xs">
-              Ask me anything about your courses, programming, or any topic you want to learn.
+              Ask me anything about your courses, programming, or any topic you
+              want to learn.
             </p>
             {/* Suggestion chips */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 w-full max-w-md">
@@ -225,14 +253,15 @@ export default function AiChat() {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder="Ask anything... (Enter to send, Shift+Enter for new line)"
+              placeholder="Ask anything..."
               rows={1}
               disabled={loading}
               className="w-full px-4 py-3 pr-4 bg-[#FAFAF9] border border-[#E4E2DC] rounded-[12px] text-[13.5px] text-[#1A1A1A] placeholder-[#BDBAB4] focus:outline-none focus:border-[#3B8C5A] focus:bg-white transition resize-none disabled:opacity-60"
               style={{ minHeight: "46px", maxHeight: "120px" }}
               onInput={(e) => {
                 e.target.style.height = "auto";
-                e.target.style.height = Math.min(e.target.scrollHeight, 120) + "px";
+                e.target.style.height =
+                  Math.min(e.target.scrollHeight, 120) + "px";
               }}
             />
           </div>
@@ -241,10 +270,11 @@ export default function AiChat() {
             disabled={!input.trim() || loading}
             className="w-11 h-11 bg-[#3B8C5A] hover:bg-[#2F7048] disabled:opacity-40 disabled:cursor-not-allowed text-white rounded-[12px] flex items-center justify-center flex-shrink-0 transition"
           >
-            {loading
-              ? <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-              : <i className="ti ti-send text-[17px]" />
-            }
+            {loading ? (
+              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+            ) : (
+              <i className="ti ti-send text-[17px]" />
+            )}
           </button>
         </div>
         <p className="text-[11px] text-[#CCC] mt-2 text-center">
